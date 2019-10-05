@@ -1,1 +1,1 @@
-web: python3 skid_api.py
+web gunicorn:skid_api.py:main
