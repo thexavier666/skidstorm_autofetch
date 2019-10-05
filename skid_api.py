@@ -4,6 +4,7 @@ import json
 import requests
 import threading
 import time
+import os
 
 from flask import Flask
 app = Flask(__name__)
@@ -111,7 +112,7 @@ def main():
     thread_1 = threading.Thread(target=fetch_data_infinite, args=(5,))
     thread_1.start()
 
-    app.run(debug = True)
+    app.run(host = '0.0.0.0', port = int(os.environ.get("PORT", 5000)) , debug = True)
 
 if __name__ == '__main__':
     main()
