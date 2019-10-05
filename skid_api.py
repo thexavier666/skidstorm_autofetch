@@ -7,9 +7,6 @@ import time
 import os
 import bottle
 
-#from flask import Flask
-#app = Flask(__name__)
-
 player_db_file  = 'player_db.json'
 fetch_page_size = 100
 fetch_interval  = 60
@@ -102,7 +99,6 @@ def get_default_page():
 
 def fetch_data_infinite(num_results):
     while True:
-        #print("Data fetched at {}".format(time.time()))
         get_all_ranks(num_results)
         time.sleep(fetch_interval)
 
@@ -110,9 +106,9 @@ def main():
     thread_1 = threading.Thread(target=fetch_data_infinite, args=(5,))
     thread_1.start()
 
-    bottle.route('/', method=GET)(get_default_page)
-    bottle.route('/api/get_rank/<num_results>', method=GET)(get_all_ranks)
-    bottle.route('/gen/show_rank', method=GET)(show_rank)
+    bottle.route('/', method='GET')(get_default_page)
+    bottle.route('/api/get_rank/<num_results>', method='GET')(get_all_ranks)
+    bottle.route('/gen/show_rank', method='GET')(open_player_db)
 
     bottle.run(host = '0.0.0.0', port = int(os.environ.get("PORT", 5000)) , debug = True)
 
