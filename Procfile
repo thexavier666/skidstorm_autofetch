@@ -1,1 +1,1 @@
-python3 skid_api.py
+web: python3 skid_api.py
