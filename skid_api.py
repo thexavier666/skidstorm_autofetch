@@ -110,7 +110,7 @@ def main():
     bottle.route('/api/get_rank/<num_results>', method='GET')(get_all_ranks)
     bottle.route('/gen/show_rank', method='GET')(open_player_db)
 
-    bottle.run(host = '0.0.0.0', port = int(os.environ.get("PORT", 5000)) , debug = True)
+    bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
 
 if __name__ == '__main__':
     main()
