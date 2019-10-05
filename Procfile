@@ -1,1 +1,1 @@
-web gunicorn:skid_api.py:main
+web gunicorn:skid_api:skid_api
