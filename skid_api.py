@@ -5,9 +5,10 @@ import requests
 import threading
 import time
 import os
+import bottle
 
-from flask import Flask
-app = Flask(__name__)
+#from flask import Flask
+#app = Flask(__name__)
 
 player_db_file  = 'player_db.json'
 fetch_page_size = 100
@@ -41,7 +42,6 @@ def get_rank_range_limits(n, range_val):
 
     return lower_limit,upper_limit
 
-@app.route('/api/get_rank/<num_results>')
 def get_all_ranks(num_results):
 
     final_dict = {}
@@ -65,7 +65,6 @@ def get_all_ranks(num_results):
 
     return final_dict
 
-@app.route('/gen/show_rank')
 def open_player_db():
     player_list = []
 
@@ -98,7 +97,6 @@ def list_to_string(player_list):
 
     return big_string
 
-@app.route('/')
 def get_default_page():
     return "This service is brought to you by xavier666"
 
@@ -112,7 +110,11 @@ def main():
     thread_1 = threading.Thread(target=fetch_data_infinite, args=(5,))
     thread_1.start()
 
-    app.run(host = '0.0.0.0', port = int(os.environ.get("PORT", 5000)) , debug = True)
+    bottle.route('/', method=GET)(get_default_page)
+    bottle.route('/api/get_rank/<num_results>', method=GET)(get_all_ranks)
+    bottle.route('/gen/show_rank', method=GET)(show_rank)
+
+    bottle.run(host = '0.0.0.0', port = int(os.environ.get("PORT", 5000)) , debug = True)
 
 if __name__ == '__main__':
     main()
