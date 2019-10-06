@@ -7,8 +7,9 @@ import time
 import os
 import bottle
 
-player_db_file  = 'data/player_db_{}.json'
-fetch_interval  = 120
+player_db_file_dir  = 'data/'
+player_db_file      = player_db_file_dir + 'player_db_{}.json'
+fetch_interval      = 120
 
 def get_all_ranks(num_results,country_code,fetch_page_size=100):
 
@@ -126,9 +127,15 @@ def fetch_data_infinite(num_results,alt_num_results):
 
         time.sleep(fetch_interval)
 
+def create_data_dir():
+    if os.path.exists(player_db_file_dir) == False:
+        os.mkdir(player_db_file_dir)
+
 def main():
     thread_1 = threading.Thread(target=fetch_data_infinite, args=(10,1,))
     thread_1.start()
+
+    create_data_dir()
 
     bottle.route('/', method='GET')(get_default_page)
     bottle.route('/api/get_rank/<num_results>', method='GET')(get_all_ranks)
