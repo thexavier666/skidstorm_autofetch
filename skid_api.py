@@ -123,6 +123,8 @@ def list_to_html(player_list):
 
     col_header = ['Sl. No.', 'Name', 'Trophies', 'Legendary Trophies', 'Clan']
 
+    responsive_string = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+
     style_string = \
     "<head> \
         <link href=\"https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap\" rel=\"stylesheet\"> \
@@ -142,7 +144,7 @@ def list_to_html(player_list):
         </style> \
     </head>"
 
-    big_string = '<html>{}<body bgcolor=\"#66d48f\"><table cellpadding=\"5\">'.format(style_string)
+    big_string = '<html>{}{}<body bgcolor=\"#66d48f\"><table cellpadding=\"5\">'.format(responsive_string,style_string)
     big_string += \
             "<tr> \
                 <td><b>{}</b></td> \
