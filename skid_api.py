@@ -51,11 +51,13 @@ def get_rank_range_details(num_1, num_2, rank_val, country_code):
     for each_player in q['ranks']:
 
         resp_dict[rank_val] = {
-                'name'      :each_player['username'],
-                'trophies'  :each_player['rank'],
-                'device_id' :each_player['device'],
-                'clan_tag'  :each_player['clanTag'],
-                'clan_name' :each_player['clanName']}
+                'name'          :each_player['username'],
+                'trophies'      :each_player['rank'],
+                'device_id'     :each_player['device'],
+                'clan_tag'      :each_player['clanTag'],
+                'clan_name'     :each_player['clanName'],
+                'leg_trophies'  :each_player['legendaryTrophies']
+                }
 
         rank_val += 1
 
@@ -72,6 +74,7 @@ def open_player_db(country_code):
                 key,
                 player_data[key]['name'],
                 player_data[key]['trophies'],
+                player_data[key]['leg_trophies'],
                 player_data[key]['clan_tag']])
 
     return list_to_html(player_list)
@@ -79,6 +82,14 @@ def open_player_db(country_code):
 def list_to_html(player_list):
 
     big_string = '<html><body><table>'
+    big_string += \
+            "<tr> \
+                <td>{}</td> \
+                <td>{}</td> \
+                <td>{}</td> \
+                <td>{}</td> \
+                <td>{}</td> \
+            </tr>".format('Sl. No.', 'Name', 'Trophies', 'Legendary Trophies', 'Clan Tag')
 
     for row in player_list:
         big_string += \
@@ -87,7 +98,8 @@ def list_to_html(player_list):
                 <td>{}</td> \
                 <td>{}</td> \
                 <td>{}</td> \
-            </tr>".format(row[0],row[1],row[2],row[3])
+                <td>{}</td> \
+            </tr>".format(row[0],row[1],row[2],row[3],row[4])
 
     big_string += '</table></body></html>'
 
@@ -104,6 +116,7 @@ def fetch_data_infinite(num_results,alt_num_results):
         get_all_ranks(alt_num_results,'nl',100)
         get_all_ranks(alt_num_results,'fr',100)
         get_all_ranks(alt_num_results,'us',100)
+        get_all_ranks(alt_num_results,'be',100)
 
         time.sleep(fetch_interval)
 
