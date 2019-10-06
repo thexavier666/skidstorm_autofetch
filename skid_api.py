@@ -124,10 +124,18 @@ def list_to_html(player_list):
     "<head> \
         <link href=\"https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap\" rel=\"stylesheet\"> \
         <style> \
-            body { \
+            body{ \
                 font-family: 'Roboto Mono', monospace; \
                 font-size: 12px; \
-                } \
+            } \
+            table{ \
+                border:1px solid black; \
+                margin-left:auto; \
+                margin-right:auto; \
+            } \
+            td.num_type{ \
+                text-align: right; \
+            } \
         </style> \
     </head>"
 
@@ -144,10 +152,10 @@ def list_to_html(player_list):
     for row in player_list:
         big_string += \
             "<tr> \
+                <td class=\"num_type\">{}</td> \
                 <td>{}</td> \
-                <td>{}</td> \
-                <td>{}</td> \
-                <td>{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
                 <td>{}</td> \
             </tr>".format(row[0],row[1],row[2],row[3],row[4])
 
@@ -162,15 +170,14 @@ def get_default_page():
     return bottle.static_file('index.html', root='./public')
 
 def fetch_data_infinite(num_results,alt_num_results):
+
+    country_list = ['in','nl','fr','us','be','es','gb']
+
     while True:
-        get_all_ranks(num_results,'ALL')
-        get_all_ranks(alt_num_results,'in',100)
-        get_all_ranks(alt_num_results,'it',100)
-        get_all_ranks(alt_num_results,'nl',100)
-        get_all_ranks(alt_num_results,'fr',100)
-        get_all_ranks(alt_num_results,'us',100)
-        get_all_ranks(alt_num_results,'be',100)
-        get_all_ranks(alt_num_results,'es',100)
+        get_all_ranks(num_results,'ALL',100)
+
+        for country in country_list:
+            get_all_ranks(alt_num_results,country,100)
 
         time.sleep(fetch_interval)
 
