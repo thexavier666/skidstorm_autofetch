@@ -11,6 +11,39 @@ player_db_file_dir  = 'data/'
 player_db_file      = player_db_file_dir + 'player_db_{}.json'
 fetch_interval      = 120
 
+revo_clan_id        = ['93633','123276','119234','126321']
+revo_clan_dict      = { 
+        '93633'   :'DRIFT Revolution', 
+        '123276'  :'DRIFT Revolution FRESHER',
+        '119234'  :'DRIFT Revolution ORIGINS',
+        '126321'  :'DRIFT Revolution LEGACY'}
+
+def get_revo_score():
+    revo_player_list = []
+    init_rank = 1
+    country_code = 'ALL'
+
+    while os.path.exists(player_db_file.format(country_code)) == False:
+        time.sleep(1)
+
+    with open(player_db_file.format(country_code),'r') as json_file:
+        player_data = json.load(json_file)
+
+        for key in player_data:
+            if player_data[key]['clan_id'] in revo_clan_id:
+
+                tmp = [ init_rank, \
+                        player_data[key]['name'], \
+                        player_data[key]['trophies'], \
+                        player_data[key]['leg_trophies'], \
+                        player_data[key]['clan_name']]
+
+                revo_player_list.append(tmp)
+
+                init_rank += 1
+
+        return list_to_html(revo_player_list)
+
 def get_all_ranks(num_results,country_code,fetch_page_size=100):
 
     final_dict = {}
@@ -57,8 +90,8 @@ def get_rank_range_details(num_1, num_2, rank_val, country_code):
                 'device_id'     :each_player['device'],
                 'clan_tag'      :each_player['clanTag'],
                 'clan_name'     :each_player['clanName'],
-                'leg_trophies'  :each_player['legendaryTrophies']
-                }
+                'clan_id'       :each_player['clanId'],
+                'leg_trophies'  :each_player['legendaryTrophies']}
 
         rank_val += 1
 
@@ -85,16 +118,27 @@ def open_player_db(country_code):
 
 def list_to_html(player_list):
 
-    col_header = ['Sl. No.', 'Name', 'Trophies', 'Legendary Trophies', 'Clan Tag']
+    col_header = ['Sl. No.', 'Name', 'Trophies', 'Legendary Trophies', 'Clan']
 
-    big_string = '<html><body><table>'
+    style_string = \
+    "<head> \
+        <link href=\"https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap\" rel=\"stylesheet\"> \
+        <style> \
+            body { \
+                font-family: 'Roboto Mono', monospace; \
+                font-size: 12px; \
+                } \
+        </style> \
+    </head>"
+
+    big_string = '<html>{}<body><table cellpadding=\"5\">'.format(style_string)
     big_string += \
             "<tr> \
-                <td>{}</td> \
-                <td>{}</td> \
-                <td>{}</td> \
-                <td>{}</td> \
-                <td>{}</td> \
+                <td><b>{}</b></td> \
+                <td><b>{}</b></td> \
+                <td><b>{}</b></td> \
+                <td><b>{}</b></td> \
+                <td><b>{}</b></td> \
             </tr>".format(*col_header)
 
     for row in player_list:
@@ -110,6 +154,9 @@ def list_to_html(player_list):
     big_string += '</table></body></html>'
 
     return big_string
+
+def get_static_page(page_name='index.hmtl'):
+    return bottle.static_file(page_name, root='./public')
 
 def get_default_page():
     return bottle.static_file('index.html', root='./public')
@@ -138,8 +185,10 @@ def main():
     create_data_dir()
 
     bottle.route('/', method='GET')(get_default_page)
-    bottle.route('/api/get_rank/<num_results>', method='GET')(get_all_ranks)
+    bottle.route('/<page_name>', method='GET')(get_static_page)
+    bottle.route('/api/get_rank/<num_results>/<country_code>', method='GET')(get_all_ranks)
     bottle.route('/gen/show_rank/<country_code>', method='GET')(open_player_db)
+    bottle.route('/gen/get_revo_score', method='GET')(get_revo_score)
 
     bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
 
