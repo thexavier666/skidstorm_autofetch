@@ -8,7 +8,7 @@ import os
 import bottle
 
 player_db_file  = 'data/player_db_{}.json'
-fetch_interval  = 60
+fetch_interval  = 120
 
 def get_all_ranks(num_results,country_code,fetch_page_size=100):
 
@@ -84,6 +84,8 @@ def open_player_db(country_code):
 
 def list_to_html(player_list):
 
+    col_header = ['Sl. No.', 'Name', 'Trophies', 'Legendary Trophies', 'Clan Tag']
+
     big_string = '<html><body><table>'
     big_string += \
             "<tr> \
@@ -92,7 +94,7 @@ def list_to_html(player_list):
                 <td>{}</td> \
                 <td>{}</td> \
                 <td>{}</td> \
-            </tr>".format('Sl. No.', 'Name', 'Trophies', 'Legendary Trophies', 'Clan Tag')
+            </tr>".format(*col_header)
 
     for row in player_list:
         big_string += \
@@ -109,7 +111,6 @@ def list_to_html(player_list):
     return big_string
 
 def get_default_page():
-    #return "This service is brought to you by xavier666"
     return bottle.static_file('index.html', root='./public')
 
 def fetch_data_infinite(num_results,alt_num_results):
@@ -126,7 +127,7 @@ def fetch_data_infinite(num_results,alt_num_results):
         time.sleep(fetch_interval)
 
 def main():
-    thread_1 = threading.Thread(target=fetch_data_infinite, args=(5,1,))
+    thread_1 = threading.Thread(target=fetch_data_infinite, args=(10,1,))
     thread_1.start()
 
     bottle.route('/', method='GET')(get_default_page)
