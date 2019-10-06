@@ -11,17 +11,20 @@ player_db_file_dir  = 'data/'
 player_db_file      = player_db_file_dir + 'player_db_{}.json'
 fetch_interval      = 120
 
-revo_clan_id        = ['93633','123276','119234','126321']
-revo_clan_dict      = { 
-        '93633'   :'DRIFT Revolution', 
-        '123276'  :'DRIFT Revolution FRESHER',
-        '119234'  :'DRIFT Revolution ORIGINS',
-        '126321'  :'DRIFT Revolution LEGACY'}
+clan_id_dict = {
+        'revo' : ['93633','123276','119234','126321'],
+        'cyre' : ['138751'],
+        'espa' : ['150634'],
+        'noss' : ['188811'],
+        'free' : ['None']}
 
-def get_revo_score():
-    revo_player_list = []
-    init_rank = 1
-    country_code = 'ALL'
+def get_clan_score_wrapper(clan_id):
+    return get_clan_score(clan_id_dict[clan_id])
+
+def get_clan_score(clan_id_list):
+    clan_player_list    = []
+    init_rank           = 1
+    country_code        = 'ALL'
 
     while os.path.exists(player_db_file.format(country_code)) == False:
         time.sleep(1)
@@ -30,7 +33,7 @@ def get_revo_score():
         player_data = json.load(json_file)
 
         for key in player_data:
-            if player_data[key]['clan_id'] in revo_clan_id:
+            if player_data[key]['clan_id'] in clan_id_list:
 
                 tmp = [ init_rank, \
                         player_data[key]['name'], \
@@ -38,11 +41,11 @@ def get_revo_score():
                         player_data[key]['leg_trophies'], \
                         player_data[key]['clan_name']]
 
-                revo_player_list.append(tmp)
+                clan_player_list.append(tmp)
 
                 init_rank += 1
 
-        return list_to_html(revo_player_list)
+        return list_to_html(clan_player_list)
 
 def get_all_ranks(num_results,country_code,fetch_page_size=100):
 
@@ -139,7 +142,7 @@ def list_to_html(player_list):
         </style> \
     </head>"
 
-    big_string = '<html>{}<body><table cellpadding=\"5\">'.format(style_string)
+    big_string = '<html>{}<body bgcolor=\"#66d48f\"><table cellpadding=\"5\">'.format(style_string)
     big_string += \
             "<tr> \
                 <td><b>{}</b></td> \
@@ -171,7 +174,7 @@ def get_default_page():
 
 def fetch_data_infinite(num_results,alt_num_results):
 
-    country_list = ['in','nl','fr','us','be','es','gb']
+    country_list = ['in','it','nl','fr','us','be','es','gb']
 
     while True:
         get_all_ranks(num_results,'ALL',100)
@@ -195,7 +198,7 @@ def main():
     bottle.route('/<page_name>', method='GET')(get_static_page)
     bottle.route('/api/get_rank/<num_results>/<country_code>', method='GET')(get_all_ranks)
     bottle.route('/gen/show_rank/<country_code>', method='GET')(open_player_db)
-    bottle.route('/gen/get_revo_score', method='GET')(get_revo_score)
+    bottle.route('/secret/get_clan_score/<clan_id>', method='GET')(get_clan_score_wrapper)
 
     bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
 
