@@ -7,7 +7,7 @@ import time
 import os
 import bottle
 
-player_db_file  = 'player_db_{}.json'
+player_db_file  = 'data/player_db_{}.json'
 fetch_interval  = 60
 
 def get_all_ranks(num_results,country_code,fetch_page_size=100):
@@ -66,6 +66,9 @@ def get_rank_range_details(num_1, num_2, rank_val, country_code):
 def open_player_db(country_code):
     player_list = []
 
+    while os.path.exists(player_db_file.format(country_code)) == False:
+        time.sleep(1)
+
     with open(player_db_file.format(country_code),'r') as json_file:
         player_data = json.load(json_file)
 
@@ -106,7 +109,8 @@ def list_to_html(player_list):
     return big_string
 
 def get_default_page():
-    return "This service is brought to you by xavier666"
+    #return "This service is brought to you by xavier666"
+    return bottle.static_file('index.html', root='./public')
 
 def fetch_data_infinite(num_results,alt_num_results):
     while True:
@@ -117,6 +121,7 @@ def fetch_data_infinite(num_results,alt_num_results):
         get_all_ranks(alt_num_results,'fr',100)
         get_all_ranks(alt_num_results,'us',100)
         get_all_ranks(alt_num_results,'be',100)
+        get_all_ranks(alt_num_results,'es',100)
 
         time.sleep(fetch_interval)
 
