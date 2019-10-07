@@ -56,7 +56,7 @@ def get_clan_score_total(clan_player_list):
 
     return int(total_score)
 
-def get_all_ranks(num_results,country_code,fetch_page_size=config.size_per_fetch):
+def get_all_ranks(num_results,country_code,fetch_page_size):
 
     final_dict  = {}
     num_results = (int)(num_results)
@@ -241,7 +241,7 @@ def main():
     bottle.route('/gen/show_rank/<country_code>',               method='GET')(open_player_db)
     bottle.route('/secret/get_clan_score/<clan_id>',            method='GET')(get_clan_score)
 
-    bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = True)
+    bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
 
 if __name__ == '__main__':
     main()
