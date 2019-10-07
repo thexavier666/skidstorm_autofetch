@@ -18,13 +18,11 @@ clan_id_dict = {
         'sx'   : ['163287'],
         'free' : ['0']}
 
-def get_clan_score_wrapper(clan_id):
-    return get_clan_score(clan_id_dict[clan_id])
-
-def get_clan_score(clan_id_list):
+def get_clan_score(clan_id):
     clan_player_list    = []
-    init_rank           = 1
     country_code        = 'ALL'
+    clan_id_list        = clan_id_dict[clan_id]
+    init_rank           = 1
 
     while os.path.exists(player_db_file.format(country_code)) == False:
         time.sleep(1)
@@ -210,7 +208,7 @@ def list_to_html(player_list, total_score = 0):
 
     return big_string
 
-def get_static_page(page_name='index.hmtl'):
+def get_static_page(page_name):
     return bottle.static_file(page_name, root='./public')
 
 def get_default_page():
@@ -250,7 +248,7 @@ def main():
     bottle.route('/<page_name>',                                method='GET')(get_static_page)
     bottle.route('/api/get_rank/<num_results>/<country_code>',  method='GET')(get_all_ranks)
     bottle.route('/gen/show_rank/<country_code>',               method='GET')(open_player_db)
-    bottle.route('/secret/get_clan_score/<clan_id>',            method='GET')(get_clan_score_wrapper)
+    bottle.route('/secret/get_clan_score/<clan_id>',            method='GET')(get_clan_score)
 
     bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
 
