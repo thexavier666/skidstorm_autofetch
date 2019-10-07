@@ -9,13 +9,13 @@ import bottle
 
 player_db_file_dir  = 'data/'
 player_db_file      = player_db_file_dir + 'player_db_{}.json'
-fetch_interval      = 120
 
 clan_id_dict = {
         'revo' : ['93633','123276','119234','126321'],
         'cyre' : ['138751'],
         'espa' : ['150634'],
         'noss' : ['188811'],
+        'sx'   : ['163287'],
         'free' : ['0']}
 
 def get_clan_score_wrapper(clan_id):
@@ -65,7 +65,7 @@ def get_clan_score_total(clan_player_list):
 
         init_rank += group_size
 
-    return total_score
+    return int(total_score)
 
 def get_all_ranks(num_results,country_code,fetch_page_size=100):
 
@@ -127,9 +127,9 @@ def check_clan_id(player_data):
         player_data['clan_id'] is None or \
         player_data['clan_name'] is None:
 
-        player_data['clan_id'] = '0'
-        player_data['clan_tag'] = 'FREE_AGENT'
-        player_data['clan_name'] = 'FREE_AGENT'
+        player_data['clan_id']      = '0'
+        player_data['clan_tag']     = 'FREE_AGENT'
+        player_data['clan_name']    = 'FREE_AGENT'
 
     return player_data
 
@@ -216,15 +216,15 @@ def get_static_page(page_name='index.hmtl'):
 def get_default_page():
     return bottle.static_file('index.html', root='./public')
 
-def fetch_data_infinite(num_results,alt_num_results):
+def fetch_data_infinite(num_results_world,num_results_country,fetch_interval, country_list):
 
-    country_list = ['in','it','nl','fr','us','be','es','gb']
+    size_per_fetch = 100
 
     while True:
-        get_all_ranks(num_results,'ALL',100)
+        get_all_ranks(num_results_world,'ALL',size_per_fetch)
 
         for country in country_list:
-            get_all_ranks(alt_num_results,country,100)
+            get_all_ranks(num_results_country,country,size_per_fetch)
 
         time.sleep(fetch_interval)
 
@@ -233,16 +233,24 @@ def create_data_dir():
         os.mkdir(player_db_file_dir)
 
 def main():
-    thread_1 = threading.Thread(target=fetch_data_infinite, args=(10,1,))
+
+    num_pages_fetch_world = 11
+    num_pages_fetch_country = 1
+    fetch_interval = 120
+    country_list = ['pt','de','pl','cn','in','it','nl','fr','us','be','es','gb']
+
+    thread_1 = threading.Thread(target=fetch_data_infinite, \
+            args=(num_pages_fetch_world,num_pages_fetch_country, \
+            fetch_interval, country_list,))
     thread_1.start()
 
     create_data_dir()
 
-    bottle.route('/', method='GET')(get_default_page)
-    bottle.route('/<page_name>', method='GET')(get_static_page)
-    bottle.route('/api/get_rank/<num_results>/<country_code>', method='GET')(get_all_ranks)
-    bottle.route('/gen/show_rank/<country_code>', method='GET')(open_player_db)
-    bottle.route('/secret/get_clan_score/<clan_id>', method='GET')(get_clan_score_wrapper)
+    bottle.route('/',                                           method='GET')(get_default_page)
+    bottle.route('/<page_name>',                                method='GET')(get_static_page)
+    bottle.route('/api/get_rank/<num_results>/<country_code>',  method='GET')(get_all_ranks)
+    bottle.route('/gen/show_rank/<country_code>',               method='GET')(open_player_db)
+    bottle.route('/secret/get_clan_score/<clan_id>',            method='GET')(get_clan_score_wrapper)
 
     bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
 
