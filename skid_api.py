@@ -6,6 +6,7 @@ import threading
 import time
 import os
 import bottle
+import datetime
 
 import config
 
@@ -221,6 +222,47 @@ def create_data_dir():
     if os.path.exists(config.player_db_file_dir) == False:
         os.mkdir(config.player_db_file_dir)
 
+def get_season_end():
+    date_end_dict = config.season_end
+
+    date_end = datetime.date( \
+            date_end_dict['yyyy'], \
+            date_end_dict['mm'], \
+            date_end_dict['dd'])
+
+    date_start = datetime.date.today()
+
+    diff_day = date_end - date_start
+
+    return season_end_page(str(diff_day))
+
+
+def season_end_page(diff_day):
+
+    date_end_dict = config.season_end
+    date_end_str = '{} / {} / {}'.format(date_end_dict['dd'],date_end_dict['mm'],date_end_dict['yyyy'])
+
+    diff_day = (diff_day[0:2]).strip()
+
+    style_string = \
+    "<head> \
+        <link href=\"https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap\" rel=\"stylesheet\"> \
+        <style> \
+            body{ \
+                font-family: 'Roboto Mono', monospace; \
+                font-size: 36px; \
+            } \
+        </style> \
+    </head>"
+
+    big_string = \
+    "<html>{}<body bgcolor=\"#ace8d4\"><center> \
+    <br><br>Season ends in<br><br><b>{} days</b><br><br> \
+    which is on<br><br><b>{} GMT</b> \
+    <center></body></html>".format(style_string,diff_day,date_end_str)
+
+    return big_string
+
 def main():
 
     num_pages_fetch_world   = config.num_pages_fetch_world
@@ -238,6 +280,7 @@ def main():
     bottle.route('/',                                           method='GET')(get_default_page)
     bottle.route('/<page_name>',                                method='GET')(get_static_page)
     bottle.route('/api/get_rank/<num_results>/<country_code>',  method='GET')(get_all_ranks)
+    bottle.route('/gen/get_season_end',                         method='GET')(get_season_end)
     bottle.route('/gen/show_rank/<country_code>',               method='GET')(open_player_db)
     bottle.route('/secret/get_clan_score/<clan_id>',            method='GET')(get_clan_score)
 

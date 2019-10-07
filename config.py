@@ -12,6 +12,7 @@ clan_id_dict = {
         'noss' : ['188811'],
         'sx'   : ['163287'],
         'flux' : ['178377'],
+        'rush' : ['50230'],
         'vudu' : ['164222','181859'],
         'free' : ['0']}
 
@@ -32,3 +33,6 @@ country_list = [  'au', \
 
 # number of player details to be fetched per page
 size_per_fetch = 100
+
+# season end date
+season_end = {'dd':30,'mm':10,'yyyy':2019}
