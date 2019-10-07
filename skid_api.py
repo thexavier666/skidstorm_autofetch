@@ -12,10 +12,12 @@ player_db_file      = player_db_file_dir + 'player_db_{}.json'
 
 clan_id_dict = {
         'revo' : ['93633','123276','119234','126321'],
-        'cyre' : ['138751'],
+        'cyre' : ['138751','190261'],
         'espa' : ['150634'],
         'noss' : ['188811'],
         'sx'   : ['163287'],
+        'flux' : ['178377'],
+        'vudu' : ['164222','181859'],
         'free' : ['0']}
 
 def get_clan_score(clan_id):
@@ -235,7 +237,10 @@ def main():
     num_pages_fetch_world = 11
     num_pages_fetch_country = 1
     fetch_interval = 120
-    country_list = ['pt','de','pl','cn','in','it','nl','fr','us','be','es','gb']
+    country_list = ['au', \
+            'br','us','ca', \
+            'cn','in','id','kr','jp', \
+            'pt','de','pl','it','nl','fr','be','es','gb']
 
     thread_1 = threading.Thread(target=fetch_data_infinite, \
             args=(num_pages_fetch_world,num_pages_fetch_country, \
