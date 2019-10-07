@@ -7,29 +7,19 @@ import time
 import os
 import bottle
 
-player_db_file_dir  = 'data/'
-player_db_file      = player_db_file_dir + 'player_db_{}.json'
-
-clan_id_dict = {
-        'revo' : ['93633','123276','119234','126321'],
-        'cyre' : ['138751','190261'],
-        'espa' : ['150634'],
-        'noss' : ['188811'],
-        'sx'   : ['163287'],
-        'flux' : ['178377'],
-        'vudu' : ['164222','181859'],
-        'free' : ['0']}
+import config
 
 def get_clan_score(clan_id):
     clan_player_list    = []
     country_code        = 'ALL'
-    clan_id_list        = clan_id_dict[clan_id]
+    clan_id_list        = config.clan_id_dict[clan_id]
     init_rank           = 1
+    player_db           = config.player_db_file.format(country_code)
 
-    while os.path.exists(player_db_file.format(country_code)) == False:
+    while os.path.exists(player_db) == False:
         time.sleep(1)
 
-    with open(player_db_file.format(country_code),'r') as json_file:
+    with open(player_db,'r') as json_file:
         player_data = json.load(json_file)
 
         for key in player_data:
@@ -51,10 +41,9 @@ def get_clan_score(clan_id):
 
 def get_clan_score_total(clan_player_list):
 
-    ratio_val = [0.4,0.3,0.2,0.1]
-
-    init_rank = 0
-    group_size = 5
+    ratio_val   = [0.4,0.3,0.2,0.1]
+    init_rank   = 0
+    group_size  = 5
     total_score = 0
 
     for i in range(len(ratio_val)):
@@ -67,13 +56,12 @@ def get_clan_score_total(clan_player_list):
 
     return int(total_score)
 
-def get_all_ranks(num_results,country_code,fetch_page_size=100):
+def get_all_ranks(num_results,country_code,fetch_page_size=config.size_per_fetch):
 
-    final_dict = {}
-
+    final_dict  = {}
     num_results = (int)(num_results)
-
-    range_val = fetch_page_size
+    range_val   = fetch_page_size
+    player_db   = config.player_db_file.format(country_code)
 
     for i in range(num_results):
 
@@ -85,7 +73,7 @@ def get_all_ranks(num_results,country_code,fetch_page_size=100):
 
         final_dict = {**final_dict, **resp_dict}
 
-    with open(player_db_file.format(country_code), 'w') as fp:
+    with open(player_db, 'w') as fp:
         json.dump(final_dict, fp)
 
     return final_dict
@@ -135,11 +123,12 @@ def check_clan_id(player_data):
 
 def open_player_db(country_code):
     player_list = []
+    player_db   = config.player_db_file.format(country_code)
 
-    while os.path.exists(player_db_file.format(country_code)) == False:
+    while os.path.exists(player_db) == False:
         time.sleep(1)
 
-    with open(player_db_file.format(country_code),'r') as json_file:
+    with open(player_db,'r') as json_file:
         player_data = json.load(json_file)
 
         for key in player_data:
@@ -218,7 +207,7 @@ def get_default_page():
 
 def fetch_data_infinite(num_results_world,num_results_country,fetch_interval, country_list):
 
-    size_per_fetch = 100
+    size_per_fetch = config.size_per_fetch
 
     while True:
         get_all_ranks(num_results_world,'ALL',size_per_fetch)
@@ -229,18 +218,15 @@ def fetch_data_infinite(num_results_world,num_results_country,fetch_interval, co
         time.sleep(fetch_interval)
 
 def create_data_dir():
-    if os.path.exists(player_db_file_dir) == False:
-        os.mkdir(player_db_file_dir)
+    if os.path.exists(config.player_db_file_dir) == False:
+        os.mkdir(config.player_db_file_dir)
 
 def main():
 
-    num_pages_fetch_world = 11
-    num_pages_fetch_country = 1
-    fetch_interval = 120
-    country_list = ['au', \
-            'br','us','ca', \
-            'cn','in','id','kr','jp', \
-            'pt','de','pl','it','nl','fr','be','es','gb']
+    num_pages_fetch_world   = config.num_pages_fetch_world
+    num_pages_fetch_country = config.num_pages_fetch_country
+    fetch_interval          = config.fetch_interval
+    country_list            = config.country_list
 
     thread_1 = threading.Thread(target=fetch_data_infinite, \
             args=(num_pages_fetch_world,num_pages_fetch_country, \
@@ -255,7 +241,7 @@ def main():
     bottle.route('/gen/show_rank/<country_code>',               method='GET')(open_player_db)
     bottle.route('/secret/get_clan_score/<clan_id>',            method='GET')(get_clan_score)
 
-    bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
+    bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = True)
 
 if __name__ == '__main__':
     main()
