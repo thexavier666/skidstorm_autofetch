@@ -16,7 +16,7 @@ clan_id_dict = {
         'cyre' : ['138751'],
         'espa' : ['150634'],
         'noss' : ['188811'],
-        'free' : ['None']}
+        'free' : ['0']}
 
 def get_clan_score_wrapper(clan_id):
     return get_clan_score(clan_id_dict[clan_id])
@@ -45,7 +45,27 @@ def get_clan_score(clan_id_list):
 
                 init_rank += 1
 
-        return list_to_html(clan_player_list)
+        total_score = get_clan_score_total(clan_player_list)
+
+        return list_to_html(clan_player_list,total_score)
+
+def get_clan_score_total(clan_player_list):
+
+    ratio_val = [0.4,0.3,0.2,0.1]
+
+    init_rank = 0
+    group_size = 5
+    total_score = 0
+
+    for i in range(len(ratio_val)):
+        sub_group = clan_player_list[init_rank:init_rank+5]
+
+        for j in range(len(sub_group)):
+            total_score += sub_group[j][2] * ratio_val[i]
+
+        init_rank += group_size
+
+    return total_score
 
 def get_all_ranks(num_results,country_code,fetch_page_size=100):
 
@@ -96,9 +116,22 @@ def get_rank_range_details(num_1, num_2, rank_val, country_code):
                 'clan_id'       :each_player['clanId'],
                 'leg_trophies'  :each_player['legendaryTrophies']}
 
+        resp_dict[rank_val] = check_clan_id(resp_dict[rank_val])
+
         rank_val += 1
 
     return resp_dict
+
+def check_clan_id(player_data):
+    if player_data['clan_tag'] is None or \
+        player_data['clan_id'] is None or \
+        player_data['clan_name'] is None:
+
+        player_data['clan_id'] = '0'
+        player_data['clan_tag'] = 'FREE_AGENT'
+        player_data['clan_name'] = 'FREE_AGENT'
+
+    return player_data
 
 def open_player_db(country_code):
     player_list = []
@@ -119,7 +152,7 @@ def open_player_db(country_code):
 
     return list_to_html(player_list)
 
-def list_to_html(player_list):
+def list_to_html(player_list, total_score = 0):
 
     col_header = ['Sl. No.', 'Name', 'Trophies', 'Legendary Trophies', 'Clan']
 
@@ -144,7 +177,16 @@ def list_to_html(player_list):
         </style> \
     </head>"
 
-    big_string = '<html>{}{}<body bgcolor=\"#66d48f\"><table cellpadding=\"5\">'.format(responsive_string,style_string)
+    big_string = '<html>{}{}<body bgcolor=\"#66d48f\">'.format(responsive_string,style_string)
+
+    if total_score != 0:
+        score_string = '<center><h1>Clan Score - {}</h1></center>'.format(total_score)
+        big_string += score_string
+
+    table_preamble = '<table cellpadding=\"5\">'
+
+    big_string += table_preamble
+
     big_string += \
             "<tr> \
                 <td><b>{}</b></td> \
