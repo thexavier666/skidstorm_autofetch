@@ -216,8 +216,8 @@ def open_player_full_db(ret_type='html'):
     
     player_full_db = config.player_full_db_file
     
-    while os.path.exists(player_full_db) == False:
-        time.sleep(1)
+    if os.path.exists(player_full_db) == False:
+        return config_html.full_db_error
         
     with open(player_full_db,'r') as json_file:
         player_full_data = json.load(json_file)
@@ -231,8 +231,8 @@ def open_player_db(country_code,ret_type='html'):
     player_list = []
     player_db   = config.player_db_file.format(country_code)
 
-    while os.path.exists(player_db) == False:
-        time.sleep(1)
+    if os.path.exists(player_db) == False:
+        return config_html.full_db_error
 
     with open(player_db,'r') as json_file:
         player_data = json.load(json_file)
