@@ -29,7 +29,7 @@ num_pages_fetch_world = 11
 num_pages_fetch_country = 1
 
 # sleep duration in seconds between two consecutive fetches
-fetch_interval = 120
+fetch_interval = 300
 fetch_interval_big_db = 1800
 
 # list of countries from which data is to be fetched
