@@ -8,7 +8,7 @@ player_db_file      = player_db_file_dir + 'player_db_{}.json'
 player_full_db_file = player_db_file_dir + 'player_full_db.json'
 
 # list of countries with their numeric code
-country_list_db     = 'public/country_code.json'
+country_list_db     = 'config_dir/country_code.json'
 
 # ID of clans
 clan_id_dict = {
@@ -45,4 +45,4 @@ size_per_fetch = 100
 season_end = {'dd':29,'mm':10,'yyyy':2019}
 
 # number of entries to fetch while deep scanning
-full_detail_num_entries = 200 
+full_detail_num_entries = 200

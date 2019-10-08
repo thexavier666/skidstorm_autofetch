@@ -8,8 +8,8 @@ import os
 import bottle
 import datetime
 
-import config
-import config_html
+from config_dir import config
+from config_dir import config_html
 
 country_list = json.load(open(config.country_list_db,'r'))
 country_list = {v: k for k, v in country_list.items()}
@@ -81,6 +81,8 @@ def get_all_ranks(num_results,country_code,fetch_page_size):
     with open(player_db, 'w') as fp:
         json.dump(final_dict, fp)
 
+    return final_dict
+
 def get_rank_range_limits(n, range_val):
     lower_limit = 1 + n*(range_val)
     upper_limit = lower_limit + (range_val-1)
@@ -110,12 +112,12 @@ def get_full_details():
             tmp_dict    = fetch_player_full_details(device_id,init_val)
             player_dict = {**player_dict, **tmp_dict}
 
-            print(device_id)
-
             init_val += 1
 
     with open(player_full_db, 'w') as fp:
         json.dump(player_dict, fp)
+
+    return player_dict
 
 def get_player_clan(each_player):
     if each_player['profile']['clan'] == '{}':
@@ -442,6 +444,7 @@ def main():
     bottle.route('/',                               method='GET')(get_default_page)
     bottle.route('/<page_name>',                    method='GET')(get_static_page)
     bottle.route('/api/get_rank/<num_results>/<country_code>',method='GET')(get_all_ranks)
+    bottle.route('/api/get_full_details',           method='GET')(get_full_details)
     bottle.route('/gen/get_season_end',             method='GET')(get_season_end)
     bottle.route('/gen/show_rank/<country_code>',   method='GET')(open_player_db)
     bottle.route('/secret/get_clan_score/<clan_id>',method='GET')(get_clan_score)
