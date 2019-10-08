@@ -294,6 +294,8 @@ def fetch_data_infinite(num_results_world,num_results_country,fetch_interval, co
         for country in country_list:
             get_all_ranks(num_results_country,country,size_per_fetch)
 
+        get_full_details()
+
         time.sleep(fetch_interval)
 
 def create_data_dir():
@@ -404,12 +406,17 @@ def dict_to_html(player_dict):
 
     return big_string
 
+'''
+# this code is disabled 
+# because running 2 threads are disabled in heroku
+
 def fetch_full_data_infinite(fetch_interval):
 
     while True:
         get_full_details()
         print("FULL DATA FETCTCHED")
         time.sleep(fetch_interval)
+'''
 
 def main():
 
@@ -424,9 +431,11 @@ def main():
             fetch_interval, country_list,))
     thread_player_db.start()
 
+    '''
     thread_detail_db = threading.Thread(target=fetch_full_data_infinite, \
             args=(fetch_interval_big_db,))
     thread_detail_db.start()
+    '''
 
     create_data_dir()
 
