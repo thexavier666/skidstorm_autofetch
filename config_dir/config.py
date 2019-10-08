@@ -28,15 +28,28 @@ num_pages_fetch_world = 11
 # number of pages to be fetched for a single country 
 num_pages_fetch_country = 1
 
-# sleep duration in seconds between two consecutive fetches
-fetch_interval = 300
-fetch_interval_big_db = 1800
-
 # list of countries from which data is to be fetched
 country_list = [  'au', \
         'br','us','ca','mx', \
         'cn','in','id','kr','jp', \
         'pt','de','pl','it','se','nl','fr','be','es','gb']
+
+# checking if app is running in local machine or heroku
+def is_heroku_env():
+    import os
+    if os.environ.get('APP_LOCATION') == 'heroku':
+        return True 
+    else:
+        return False
+
+# sleep duration in seconds between two consecutive fetches
+def fetch_interval():
+    if is_heroku_env() is True:
+        return 1800
+    else:
+        return 300
+
+fetch_interval_big_db = 1800
 
 # number of player details to be fetched per page
 size_per_fetch = 100
@@ -45,4 +58,8 @@ size_per_fetch = 100
 season_end = {'dd':29,'mm':10,'yyyy':2019}
 
 # number of entries to fetch while deep scanning
-full_detail_num_entries = 200 
+def full_detail_num_entries():
+    if is_heroku_env() is True: 
+        return 1000
+    else:
+        return 5

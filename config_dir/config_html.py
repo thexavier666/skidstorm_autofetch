@@ -20,3 +20,7 @@ style_string = \
 responsive_string = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
 
 table_preamble = '<table cellpadding=\"5\">'
+
+bgcolor_clan        = '#98c4ff'
+bgcolor_season_end  = '#e0a899'
+bgcolor_database    = '#ffc0cb'

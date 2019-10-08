@@ -95,7 +95,7 @@ def get_full_details():
 
     player_db       = config.player_db_file.format('ALL')
     player_full_db  = config.player_full_db_file
-    num_entries     = config.full_detail_num_entries
+    num_entries     = config.full_detail_num_entries()
     init_val        = 1
     
     while os.path.exists(player_db) == False:
@@ -257,8 +257,9 @@ def list_to_html(player_list, total_score = 0):
     style_string        = config_html.style_string
     responsive_string   = config_html.responsive_string
     table_preamble      = config_html.table_preamble
+    bgcolor_clan        = config_html.bgcolor_clan
 
-    big_string = '<html>{}{}<body bgcolor=\"#66d48f\">'.format(responsive_string,style_string % (12))
+    big_string = '<html>{}{}<body bgcolor=\"{}\">'.format(responsive_string,style_string % (12),bgcolor_clan)
 
     if total_score != 0:
         score_string = '<center><h1>Clan Score - {}</h1></center>'.format(total_score)
@@ -289,11 +290,8 @@ def list_to_html(player_list, total_score = 0):
 
     return big_string
 
-def get_static_page(page_name):
+def get_static_page(page_name='index.html'):
     return bottle.static_file(page_name, root='./public')
-
-def get_default_page():
-    return bottle.static_file('index.html', root='./public')
 
 def fetch_data_infinite(num_results_world,num_results_country,fetch_interval, country_list):
 
@@ -344,12 +342,13 @@ def season_end_page(diff_day):
     diff_day = (diff_day[0:2]).strip()
 
     style_string = config_html.style_string
+    bgcolor_season_end = config_html.bgcolor_season_end
 
     big_string = \
-    "<html>{}<body bgcolor=\"#ace8d4\"><center> \
-    <br><br>Season ends in<br><br><b>{} days</b><br><br> \
-    which is on<br><br><b>{} GMT</b> \
-    <center></body></html>".format(style_string % (36),diff_day,date_end_str)
+    "<html>{}<body bgcolor=\"{}\"><center> \
+        <br><br>Season ends in<br><br><b>{} days</b><br><br> \
+        which is on<br><br><b>{} GMT</b> \
+    <center></body></html>".format(style_string % (36),bgcolor_season_end,diff_day,date_end_str)
 
     return big_string
     
@@ -363,8 +362,9 @@ def dict_to_html(player_dict):
     responsive_string   = config_html.responsive_string
     style_string        = config_html.style_string
     table_preamble      = config_html.table_preamble
+    bgcolor_database    = config_html.bgcolor_database
 
-    big_string = '<html>{}{}<body bgcolor=\"#66d48f\">'.format(responsive_string,style_string % (12))
+    big_string = '<html>{}{}<body bgcolor=\"{}\">'.format(responsive_string,style_string % (12),bgcolor_database)
 
     big_string += table_preamble
 
@@ -442,7 +442,7 @@ def main():
 
     num_pages_fetch_world   = config.num_pages_fetch_world
     num_pages_fetch_country = config.num_pages_fetch_country
-    fetch_interval          = config.fetch_interval
+    fetch_interval          = config.fetch_interval()
     fetch_interval_big_db   = config.fetch_interval_big_db
     country_list            = config.country_list
 
@@ -459,7 +459,7 @@ def main():
 
     create_data_dir()
 
-    bottle.route('/',                                           method='GET')(get_default_page)
+    bottle.route('/',                                           method='GET')(get_static_page)
     bottle.route('/<page_name>',                                method='GET')(get_static_page)
     bottle.route('/api/get_rank/<num_results>/<country_code>',  method='GET')(get_all_ranks)
 
