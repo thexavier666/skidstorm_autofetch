@@ -45,4 +45,4 @@ size_per_fetch = 100
 season_end = {'dd':29,'mm':10,'yyyy':2019}
 
 # number of entries to fetch while deep scanning
-full_detail_num_entries = 200
+full_detail_num_entries = 5 

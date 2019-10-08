@@ -7,6 +7,7 @@ import time
 import os
 import bottle
 import datetime
+import sys
 
 from config_dir import config
 from config_dir import config_html
@@ -111,8 +112,10 @@ def get_full_details():
             device_id   = player_data[key]['device_id']
             tmp_dict    = fetch_player_full_details(device_id,init_val)
             player_dict = {**player_dict, **tmp_dict}
+            init_val   += 1
 
-            init_val += 1
+            if sys.argv[1] == '1':
+                print('[FULL_DB] Fetched details for {}'.format(device_id))
 
     with open(player_full_db, 'w') as fp:
         json.dump(player_dict, fp)
@@ -121,7 +124,7 @@ def get_full_details():
 
 def get_player_clan(each_player):
     if each_player['profile']['clan'] == '{}':
-        return 'FREE_AGENT'
+        return '--'
     else:
         return each_player['profile']['clan']['tag']
 
@@ -204,12 +207,12 @@ def check_clan_id(player_data):
         player_data['clan_name'] is None:
 
         player_data['clan_id']      = '0'
-        player_data['clan_tag']     = 'FREE_AGENT'
-        player_data['clan_name']    = 'FREE_AGENT'
+        player_data['clan_tag']     = '--'
+        player_data['clan_name']    = '--'
 
     return player_data
 
-def open_player_full_db():
+def open_player_full_db(ret_type='html'):
     
     player_full_db = config.player_full_db_file
     
@@ -218,10 +221,13 @@ def open_player_full_db():
         
     with open(player_full_db,'r') as json_file:
         player_full_data = json.load(json_file)
-        
-        return dict_to_html(player_full_data)
     
-def open_player_db(country_code):
+    if ret_type == 'html':
+        return dict_to_html(player_full_data)
+    elif ret_type == 'json':
+        return player_full_data
+    
+def open_player_db(country_code,ret_type='html'):
     player_list = []
     player_db   = config.player_db_file.format(country_code)
 
@@ -239,7 +245,10 @@ def open_player_db(country_code):
                 player_data[key]['leg_trophies'],
                 player_data[key]['clan_tag']])
 
-    return list_to_html(player_list)
+        if ret_type == 'html':
+            return list_to_html(player_list)
+        elif ret_type == 'json':
+            return player_data
 
 def list_to_html(player_list, total_score = 0):
 
@@ -263,7 +272,7 @@ def list_to_html(player_list, total_score = 0):
                 <td><b>{}</b></td> \
                 <td><b>{}</b></td> \
                 <td><b>{}</b></td> \
-                <td><b>{}</b></td> \
+                <td align=\"center\"><b>{}</b></td> \
             </tr>".format(*col_header)
 
     for row in player_list:
@@ -273,7 +282,7 @@ def list_to_html(player_list, total_score = 0):
                 <td>{}</td> \
                 <td class=\"num_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \
-                <td>{}</td> \
+                <td align=\"center\">{}</td> \
             </tr>".format(row[0],row[1],row[2],row[3],row[4])
 
     big_string += '</table></body></html>'
@@ -291,12 +300,21 @@ def fetch_data_infinite(num_results_world,num_results_country,fetch_interval, co
     size_per_fetch = config.size_per_fetch
 
     while True:
+        if sys.argv[1] == '1':
+            print('[HALF_DB] Fetching for country ALL')
+
         get_all_ranks(num_results_world,'ALL',size_per_fetch)
 
         for country in country_list:
-            get_all_ranks(num_results_country,country,size_per_fetch)
+            if sys.argv[1] == '1':
+                print('[HALF_DB] Fetching for country {}'.format(country))
 
+            get_all_ranks(num_results_country,country,size_per_fetch)
+        
         get_full_details()
+
+        if sys.argv[1] == '1':
+            print('[INFO] Going to sleep for {} seconds'.format(fetch_interval))
 
         time.sleep(fetch_interval)
 
@@ -441,14 +459,17 @@ def main():
 
     create_data_dir()
 
-    bottle.route('/',                               method='GET')(get_default_page)
-    bottle.route('/<page_name>',                    method='GET')(get_static_page)
-    bottle.route('/api/get_rank/<num_results>/<country_code>',method='GET')(get_all_ranks)
-    bottle.route('/api/get_full_details',           method='GET')(get_full_details)
-    bottle.route('/gen/get_season_end',             method='GET')(get_season_end)
-    bottle.route('/gen/show_rank/<country_code>',   method='GET')(open_player_db)
-    bottle.route('/secret/get_clan_score/<clan_id>',method='GET')(get_clan_score)
-    bottle.route('/secret/get_full_details',        method='GET')(open_player_full_db)
+    bottle.route('/',                                           method='GET')(get_default_page)
+    bottle.route('/<page_name>',                                method='GET')(get_static_page)
+    bottle.route('/api/get_rank/<num_results>/<country_code>',  method='GET')(get_all_ranks)
+
+    bottle.route('/gen/show_rank/<country_code>/<ret_type>',    method='GET')(open_player_db)
+    bottle.route('/gen/show_rank/<country_code>',               method='GET')(open_player_db)
+    bottle.route('/gen/get_season_end',                         method='GET')(get_season_end)
+
+    bottle.route('/secret/get_clan_score/<clan_id>',            method='GET')(get_clan_score)
+    bottle.route('/secret/get_full_details/<ret_type>',         method='GET')(open_player_full_db)
+    bottle.route('/secret/get_full_details',                    method='GET')(open_player_full_db)
 
     bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
 
