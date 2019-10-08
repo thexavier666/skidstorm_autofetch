@@ -9,6 +9,7 @@ import bottle
 import datetime
 
 import config
+import config_html
 
 def get_clan_score(clan_id):
     clan_player_list    = []
@@ -236,28 +237,10 @@ def list_to_html(player_list, total_score = 0):
 
     col_header = ['Sl. No.', 'Name', 'Trophies', 'Legendary Trophies', 'Clan']
 
-    responsive_string = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+    style_string        = config_html.style_string
+    responsive_string   = config_html.responsive_string
 
-    style_string = \
-    "<head> \
-        <link href=\"https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap\" rel=\"stylesheet\"> \
-        <style> \
-            body{ \
-                font-family: 'Roboto Mono', monospace; \
-                font-size: 12px; \
-            } \
-            table{ \
-                border:1px solid black; \
-                margin-left:auto; \
-                margin-right:auto; \
-            } \
-            td.num_type{ \
-                text-align: right; \
-            } \
-        </style> \
-    </head>"
-
-    big_string = '<html>{}{}<body bgcolor=\"#66d48f\">'.format(responsive_string,style_string)
+    big_string = '<html>{}{}<body bgcolor=\"#66d48f\">'.format(responsive_string,style_string % (12))
 
     if total_score != 0:
         score_string = '<center><h1>Clan Score - {}</h1></center>'.format(total_score)
@@ -333,22 +316,13 @@ def season_end_page(diff_day):
 
     diff_day = (diff_day[0:2]).strip()
 
-    style_string = \
-    "<head> \
-        <link href=\"https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap\" rel=\"stylesheet\"> \
-        <style> \
-            body{ \
-                font-family: 'Roboto Mono', monospace; \
-                font-size: 36px; \
-            } \
-        </style> \
-    </head>"
+    style_string = config_html.style_string
 
     big_string = \
     "<html>{}<body bgcolor=\"#ace8d4\"><center> \
     <br><br>Season ends in<br><br><b>{} days</b><br><br> \
     which is on<br><br><b>{} GMT</b> \
-    <center></body></html>".format(style_string,diff_day,date_end_str)
+    <center></body></html>".format(style_string % (36),diff_day,date_end_str)
 
     return big_string
     
@@ -359,28 +333,10 @@ def dict_to_html(player_dict):
             'Diamonds','Coins','Gasoline Buckets','VIP Level','VIP Experience','Level', \
             'App Version','A/C Created','Last Login','One Signal','Device ID',]
 
-    responsive_string = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+    responsive_string   = config_html.responsive_string
+    style_string        = config_html.style_string
 
-    style_string = \
-    "<head> \
-        <link href=\"https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap\" rel=\"stylesheet\"> \
-        <style> \
-            body{ \
-                font-family: 'Roboto Mono', monospace; \
-                font-size: 12px; \
-            } \
-            table{ \
-                border:1px solid black; \
-                margin-left:auto; \
-                margin-right:auto; \
-            } \
-            td.num_type{ \
-                text-align: right; \
-            } \
-        </style> \
-    </head>"
-
-    big_string = '<html>{}{}<body bgcolor=\"#66d48f\">'.format(responsive_string,style_string)
+    big_string = '<html>{}{}<body bgcolor=\"#66d48f\">'.format(responsive_string,style_string % (12))
 
     table_preamble = '<table cellpadding=\"5\">'
 
