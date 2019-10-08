@@ -70,14 +70,12 @@ def get_all_ranks(num_results,country_code,fetch_page_size):
 
         init_rank = i*range_val + 1
 
-        resp_dict = get_rank_range_details(l_lim,u_lim,init_rank, country_code)
+        resp_dict = fetch_rank_details(l_lim,u_lim,init_rank, country_code)
 
         final_dict = {**final_dict, **resp_dict}
 
     with open(player_db, 'w') as fp:
         json.dump(final_dict, fp)
-
-    return final_dict
 
 def get_rank_range_limits(n, range_val):
     lower_limit = 1 + n*(range_val)
@@ -85,7 +83,87 @@ def get_rank_range_limits(n, range_val):
 
     return lower_limit,upper_limit
 
-def get_rank_range_details(num_1, num_2, rank_val, country_code):
+def get_full_details():
+    player_dict = {}
+
+    player_db       = config.player_db_file.format('ALL')
+    player_full_db  = config.player_full_db_file
+    num_entries     = config.full_detail_num_entries
+    init_val        = 0
+    
+    while os.path.exists(player_db) == False:
+        time.sleep(1)
+
+    with open(player_db,'r') as json_file:
+        player_data = json.load(json_file)
+        
+        for key in player_data:
+
+            if init_val > num_entries:
+                break
+
+            device_id   = player_data[key]['device_id']
+            tmp_dict    = fetch_player_full_details(device_id,init_val)
+            player_dict = {**player_dict, **tmp_dict}
+
+            init_val += 1
+
+    with open(player_full_db, 'w') as fp:
+        json.dump(player_dict, fp)
+
+def get_player_clan(each_player):
+    if each_player['profile']['clan'] == '{}':
+        return 'FREE_AGENT'
+    else:
+        return each_player['profile']['clan']['tag']
+
+def fetch_player_full_details(device_id,rank_val):
+    url_str = 'http://api.skidstorm.cmcm.com/v2/profile/{}'.format(device_id)
+
+    p = requests.get(url_str)
+    q = json.loads(p.text)
+
+    resp_dict = {}
+
+    row = q['profile']
+
+    game_win    = int(row['wins'])
+    game_total  = int(row['gamesPlayed'])
+    win_ratio   = round(float(game_win*100/game_total),2)
+    acc_created = row['created'].split(' ')[0]
+    last_login  = row['last_login'].split(' ')[0]
+    clan_tag    = get_player_clan(row)
+    
+    resp_dict[rank_val] = {
+            'name'          :row['username'],
+            'user_id'       :row['id'],
+            'country_id'    :row['country'],
+            'clan_tag'      :clan_tag,
+
+            'trophies'      :row['rank'],
+            'leg_trophies'  :row['legendaryTrophies'],
+            'max_trophies'  :row['economy']['maxRank'],
+
+            'game_win'      :row['wins'],
+            'game_total'    :row['gamesPlayed'],
+            'win_ratio'     :str(win_ratio),
+
+            'diamonds'      :row['economy']['diamonds'],
+            'coins'         :row['economy']['coins'],
+            'gasoline'      :row['economy']['gasolineBucket'],
+            'vip_level'     :row['economy']['vipInfo']['vipExp'],
+            'vip_exp'       :row['economy']['vipInfo']['vipMaxLevel'],
+            'player_level'  :row['economy']['xp']['level'],
+
+            'app_version'   :row['version'],
+            'acc_created'   :str(acc_created),
+            'last_login'    :str(last_login),
+            'one_signal'    :row['onesignal'],
+            'device_id'     :row['device']}
+
+    return resp_dict
+
+def fetch_rank_details(num_1, num_2, rank_val, country_code):
 
     url_str = 'http://api.skidstorm.cmcm.com/v2/rank/list/{0}-{1}/{2}'.format(num_1,num_2,country_code)
 
@@ -122,6 +200,18 @@ def check_clan_id(player_data):
 
     return player_data
 
+def open_player_full_db():
+    
+    player_full_db = config.player_full_db_file
+    
+    while os.path.exists(player_full_db) == False:
+        time.sleep(1)
+        
+    with open(player_full_db,'r') as json_file:
+        player_full_data = json.load(json_file)
+        
+        return dict_to_html(player_full_data)
+    
 def open_player_db(country_code):
     player_list = []
     player_db   = config.player_db_file.format(country_code)
@@ -236,7 +326,6 @@ def get_season_end():
 
     return season_end_page(str(diff_day))
 
-
 def season_end_page(diff_day):
 
     date_end_dict = config.season_end
@@ -262,27 +351,130 @@ def season_end_page(diff_day):
     <center></body></html>".format(style_string,diff_day,date_end_str)
 
     return big_string
+    
+def dict_to_html(player_dict):
+    col_header = ['Username','Player ID','Country','Clan Tag', \
+            'Trophies','Legendary Trophies','Max Trophies', \
+            'Wins','Games Played','Win Ratio',
+            'Diamonds','Coins','Gasoline Buckets','VIP Level','VIP Experience','Level', \
+            'App Version','A/C Created','Last Login','One Signal','Device ID',]
+
+    responsive_string = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+
+    style_string = \
+    "<head> \
+        <link href=\"https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap\" rel=\"stylesheet\"> \
+        <style> \
+            body{ \
+                font-family: 'Roboto Mono', monospace; \
+                font-size: 12px; \
+            } \
+            table{ \
+                border:1px solid black; \
+                margin-left:auto; \
+                margin-right:auto; \
+            } \
+            td.num_type{ \
+                text-align: right; \
+            } \
+        </style> \
+    </head>"
+
+    big_string = '<html>{}{}<body bgcolor=\"#66d48f\">'.format(responsive_string,style_string)
+
+    table_preamble = '<table cellpadding=\"5\">'
+
+    big_string += table_preamble
+
+    big_string += \
+            "<tr> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
+            </tr>".format(*col_header)
+
+    for key in player_dict:
+        tmp_list = list(player_dict[key].values())
+        big_string += \
+            "<tr> \
+                <td nowrap>{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td>{}</td> \
+                <td>{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td class=\"num_type\">{}</td> \
+                <td>{}</td> \
+                <td nowrap>{}</td> \
+                <td nowrap>{}</td> \
+                <td nowrap>{}</td> \
+                <td>{}</td> \
+            </tr>".format(*tmp_list)
+
+    big_string += '</table></body></html>'
+
+    return big_string
+
+def fetch_full_data_infinite(fetch_interval):
+
+    while True:
+        get_full_details()
+        print("FULL DATA FETCTCHED")
+        time.sleep(fetch_interval)
 
 def main():
 
     num_pages_fetch_world   = config.num_pages_fetch_world
     num_pages_fetch_country = config.num_pages_fetch_country
     fetch_interval          = config.fetch_interval
+    fetch_interval_big_db   = config.fetch_interval_big_db
     country_list            = config.country_list
 
-    thread_1 = threading.Thread(target=fetch_data_infinite, \
+    thread_player_db = threading.Thread(target=fetch_data_infinite, \
             args=(num_pages_fetch_world,num_pages_fetch_country, \
             fetch_interval, country_list,))
-    thread_1.start()
+    thread_player_db.start()
+
+    thread_detail_db = threading.Thread(target=fetch_full_data_infinite, \
+            args=(fetch_interval_big_db,))
+    thread_detail_db.start()
 
     create_data_dir()
 
-    bottle.route('/',                                           method='GET')(get_default_page)
-    bottle.route('/<page_name>',                                method='GET')(get_static_page)
-    bottle.route('/api/get_rank/<num_results>/<country_code>',  method='GET')(get_all_ranks)
-    bottle.route('/gen/get_season_end',                         method='GET')(get_season_end)
-    bottle.route('/gen/show_rank/<country_code>',               method='GET')(open_player_db)
-    bottle.route('/secret/get_clan_score/<clan_id>',            method='GET')(get_clan_score)
+    bottle.route('/',                               method='GET')(get_default_page)
+    bottle.route('/<page_name>',                    method='GET')(get_static_page)
+    bottle.route('/api/get_rank/<num_results>/<country_code>',method='GET')(get_all_ranks)
+    bottle.route('/gen/get_season_end',             method='GET')(get_season_end)
+    bottle.route('/gen/show_rank/<country_code>',   method='GET')(open_player_db)
+    bottle.route('/secret/get_clan_score/<clan_id>',method='GET')(get_clan_score)
+    bottle.route('/secret/get_full_details',        method='GET')(open_player_full_db)
 
     bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
 

@@ -4,6 +4,9 @@ player_db_file_dir  = 'data/'
 # name of the json file where the data is to be stored
 player_db_file      = player_db_file_dir + 'player_db_{}.json'
 
+# name of the json file where the full player data is to be stored
+player_full_db_file = player_db_file_dir + 'player_full_db.json'
+
 # ID of clans
 clan_id_dict = {
         'revo' : ['93633','123276','119234','126321'],
@@ -24,6 +27,7 @@ num_pages_fetch_country = 1
 
 # sleep duration in seconds between two consecutive fetches
 fetch_interval = 120
+fetch_interval_big_db = 120
 
 # list of countries from which data is to be fetched
 country_list = [  'au', \
@@ -36,3 +40,8 @@ size_per_fetch = 100
 
 # season end date
 season_end = {'dd':30,'mm':10,'yyyy':2019}
+
+# number of entries to fetch while deep scanning
+full_detail_num_entries = 500
+
+full_detail_num_entries = 3
