@@ -37,17 +37,21 @@ country_list = [  'au', \
 # checking if app is running in local machine or heroku
 def is_heroku_env():
     import os
-    if os.environ.get('APP_LOCATION') == 'heroku':
+    if 'DYNO' in os.environ:
         return True 
     else:
         return False
 
 # sleep duration in seconds between two consecutive fetches
 def fetch_interval():
+    sleep_dur = 0
     if is_heroku_env() is True:
-        return 1800
+        sleep_dur = 1800
     else:
-        return 300
+        sleep_dur = 300
+    
+    print("Number of sleeps - ".format(sleep_dur))
+    return sleep_dur
 
 fetch_interval_big_db = 1800
 
@@ -59,7 +63,11 @@ season_end = {'dd':29,'mm':10,'yyyy':2019}
 
 # number of entries to fetch while deep scanning
 def full_detail_num_entries():
+    num_fetch = 0
     if is_heroku_env() is True: 
-        return 1000
+        num_fetch = 1000
     else:
-        return 5
+        num_fetch = 5
+    
+    print("Number of entries - ".format(num_fetch))
+    return num_fetch
