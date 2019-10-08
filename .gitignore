@@ -1,4 +1,4 @@
-*.json
+data/*json
 *.pyc
 *.swp
 __pycache__
