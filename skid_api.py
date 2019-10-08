@@ -11,6 +11,9 @@ import datetime
 import config
 import config_html
 
+country_list = json.load(open(config.country_list_db,'r'))
+country_list = {v: k for k, v in country_list.items()}
+
 def get_clan_score(clan_id):
     clan_player_list    = []
     country_code        = 'ALL'
@@ -90,7 +93,7 @@ def get_full_details():
     player_db       = config.player_db_file.format('ALL')
     player_full_db  = config.player_full_db_file
     num_entries     = config.full_detail_num_entries
-    init_val        = 0
+    init_val        = 1
     
     while os.path.exists(player_db) == False:
         time.sleep(1)
@@ -106,6 +109,8 @@ def get_full_details():
             device_id   = player_data[key]['device_id']
             tmp_dict    = fetch_player_full_details(device_id,init_val)
             player_dict = {**player_dict, **tmp_dict}
+
+            print(device_id)
 
             init_val += 1
 
@@ -130,15 +135,16 @@ def fetch_player_full_details(device_id,rank_val):
 
     game_win    = int(row['wins'])
     game_total  = int(row['gamesPlayed'])
-    win_ratio   = round(float(game_win*100/game_total),2)
+    win_ratio   = "%.2f" % round(float(game_win*100/game_total),2)
     acc_created = row['created'].split(' ')[0]
     last_login  = row['last_login'].split(' ')[0]
     clan_tag    = get_player_clan(row)
+    country_id = country_list[row['country']].upper()
     
     resp_dict[rank_val] = {
             'name'          :row['username'],
             'user_id'       :row['id'],
-            'country_id'    :row['country'],
+            'country_id'    :country_id,
             'clan_tag'      :clan_tag,
 
             'trophies'      :row['rank'],
@@ -239,14 +245,13 @@ def list_to_html(player_list, total_score = 0):
 
     style_string        = config_html.style_string
     responsive_string   = config_html.responsive_string
+    table_preamble      = config_html.table_preamble
 
     big_string = '<html>{}{}<body bgcolor=\"#66d48f\">'.format(responsive_string,style_string % (12))
 
     if total_score != 0:
         score_string = '<center><h1>Clan Score - {}</h1></center>'.format(total_score)
         big_string += score_string
-
-    table_preamble = '<table cellpadding=\"5\">'
 
     big_string += table_preamble
 
@@ -327,7 +332,7 @@ def season_end_page(diff_day):
     return big_string
     
 def dict_to_html(player_dict):
-    col_header = ['Username','Player ID','Country','Clan Tag', \
+    col_header = ['Sl. No.','Username','Player ID','Country','Clan Tag', \
             'Trophies','Legendary Trophies','Max Trophies', \
             'Wins','Games Played','Win Ratio',
             'Diamonds','Coins','Gasoline Buckets','VIP Level','VIP Experience','Level', \
@@ -335,15 +340,15 @@ def dict_to_html(player_dict):
 
     responsive_string   = config_html.responsive_string
     style_string        = config_html.style_string
+    table_preamble      = config_html.table_preamble
 
     big_string = '<html>{}{}<body bgcolor=\"#66d48f\">'.format(responsive_string,style_string % (12))
-
-    table_preamble = '<table cellpadding=\"5\">'
 
     big_string += table_preamble
 
     big_string += \
             "<tr> \
+                <td align=\"center\" nowrap><b>{}</b></td> \
                 <td align=\"center\" nowrap><b>{}</b></td> \
                 <td align=\"center\" nowrap><b>{}</b></td> \
                 <td align=\"center\" nowrap><b>{}</b></td> \
@@ -371,10 +376,11 @@ def dict_to_html(player_dict):
         tmp_list = list(player_dict[key].values())
         big_string += \
             "<tr> \
+                <td class=\"num_type\">{}</td> \
                 <td nowrap>{}</td> \
                 <td class=\"num_type\">{}</td> \
-                <td>{}</td> \
-                <td>{}</td> \
+                <td align=\"center\">{}</td> \
+                <td align=\"center\">{}</td> \
                 <td class=\"num_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \
@@ -392,7 +398,7 @@ def dict_to_html(player_dict):
                 <td nowrap>{}</td> \
                 <td nowrap>{}</td> \
                 <td>{}</td> \
-            </tr>".format(*tmp_list)
+            </tr>".format(key,*tmp_list)
 
     big_string += '</table></body></html>'
 
