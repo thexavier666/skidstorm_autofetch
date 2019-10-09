@@ -144,7 +144,9 @@ def fetch_player_full_details(device_id,rank_val):
     acc_created = row['created'].split(' ')[0]
     last_login  = row['last_login'].split(' ')[0]
     clan_tag    = get_player_clan(row)
-    country_id = country_list[row['country']].upper()
+    country_id  = country_list[row['country']].upper()
+    time_played = second_to_days_hours(int(row['profile']['timePlayed']))
+    time_played = '{0:02.0f} Days {1:02.0f} Hours {2:02.0f} Mins'.format(*time_played)
     
     resp_dict[rank_val] = {
             'name'          :row['username'],
@@ -159,6 +161,7 @@ def fetch_player_full_details(device_id,rank_val):
             'game_win'      :row['wins'],
             'game_total'    :row['gamesPlayed'],
             'win_ratio'     :str(win_ratio),
+            'time_played'   :str(time_played),
 
             'diamonds'      :row['economy']['diamonds'],
             'coins'         :row['economy']['coins'],
@@ -217,7 +220,7 @@ def open_player_full_db(ret_type='html'):
     player_full_db = config.player_full_db_file
     
     if os.path.exists(player_full_db) == False:
-        return config_html.full_db_error
+        return get_static_page('error.html') 
         
     with open(player_full_db,'r') as json_file:
         player_full_data = json.load(json_file)
@@ -232,7 +235,7 @@ def open_player_db(country_code,ret_type='html'):
     player_db   = config.player_db_file.format(country_code)
 
     if os.path.exists(player_db) == False:
-        return config_html.full_db_error
+        return get_static_page('error.html') 
 
     with open(player_db,'r') as json_file:
         player_data = json.load(json_file)
@@ -252,7 +255,7 @@ def open_player_db(country_code,ret_type='html'):
 
 def list_to_html(player_list, total_score = 0):
 
-    col_header = ['Sl. No.', 'Name', 'Trophies', 'Legendary Trophies', 'Clan']
+    col_header = ['Sl. No.', 'Name', 'Trophies (Current)', 'Trophies (Legendary)', 'Clan']
 
     style_string        = config_html.style_string
     responsive_string   = config_html.responsive_string
@@ -269,11 +272,11 @@ def list_to_html(player_list, total_score = 0):
 
     big_string += \
             "<tr> \
-                <td><b>{}</b></td> \
-                <td><b>{}</b></td> \
-                <td><b>{}</b></td> \
-                <td><b>{}</b></td> \
-                <td align=\"center\"><b>{}</b></td> \
+                <td class=\"table-heading\"><b>{}</b></td> \
+                <td class=\"table-heading\"><b>{}</b></td> \
+                <td class=\"table-heading\"><b>{}</b></td> \
+                <td class=\"table-heading\"><b>{}</b></td> \
+                <td class=\"table-heading\"><b>{}</b></td> \
             </tr>".format(*col_header)
 
     for row in player_list:
@@ -283,12 +286,27 @@ def list_to_html(player_list, total_score = 0):
                 <td>{}</td> \
                 <td class=\"num_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \
-                <td align=\"center\">{}</td> \
+                <td>{}</td> \
             </tr>".format(row[0],row[1],row[2],row[3],row[4])
 
     big_string += '</table></body></html>'
 
     return big_string
+
+def second_to_days_hours(time_second):
+    sec_day     = 86400
+    sec_hour    = 3600
+    sec_min     = 60
+
+    num_days    = time_second // sec_day
+    sec_rem     = time_second - (num_days * sec_day)
+
+    num_hours   = sec_rem // sec_hour
+    sec_rem     = sec_rem - (num_hours * sec_hour)
+
+    num_mins    = sec_rem // sec_min
+
+    return [num_days, num_hours, num_mins]
 
 def get_static_page(page_name='index.html'):
     return bottle.static_file(page_name, root='./public')
@@ -353,11 +371,11 @@ def season_end_page(diff_day):
     return big_string
     
 def dict_to_html(player_dict):
-    col_header = ['Sl. No.','Username','Player ID','Country','Clan Tag', \
-            'Trophies','Legendary Trophies','Max Trophies', \
-            'Wins','Games Played','Win Ratio',
+    col_header = ['Rank','Username','Player ID','Country','Clan Tag', \
+            'Trophies (Current)','Trophies (Legendary)','Trophies (Highest Ever)', \
+            'Matches Won','Matches Played','Win Ratio','Time Played', \
             'Diamonds','Coins','Gasoline Buckets','VIP Level','VIP Experience','Level', \
-            'App Version','A/C Created','Last Login','One Signal','Device ID',]
+            'App Version','Account Created','App Last Login','One Signal','Device ID',]
 
     responsive_string   = config_html.responsive_string
     style_string        = config_html.style_string
@@ -370,28 +388,29 @@ def dict_to_html(player_dict):
 
     big_string += \
             "<tr> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
-                <td align=\"center\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
+                <td class=\"table-heading\" nowrap><b>{}</b></td> \
             </tr>".format(*col_header)
 
     for key in player_dict:
@@ -409,6 +428,7 @@ def dict_to_html(player_dict):
                 <td class=\"num_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \
+                <td nowrap class=\"num_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \

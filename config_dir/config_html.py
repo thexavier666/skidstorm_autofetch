@@ -7,12 +7,19 @@ style_string = \
             font-size: %dpx; \
         } \
         table{ \
-            border:1px solid black; \
+            border:1px solid grey; \
             margin-left:auto; \
             margin-right:auto; \
         } \
         td.num_type{ \
             text-align: right; \
+        } \
+        table td + td { \
+            border-left:1px solid gray; \
+        } \
+        .table-heading { \
+            border-bottom:1px solid gray; \
+            text-align:center; \
         } \
     </style> \
 </head>"
@@ -24,18 +31,3 @@ table_preamble = '<table cellpadding=\"5\">'
 bgcolor_clan        = '#98c4ff'
 bgcolor_season_end  = '#e0a899'
 bgcolor_database    = '#ffc0cb'
-bgcolor_error       = '#e35604'
-
-full_db_error = \
-"<html> \
-    {} \
-    <body bgcolor=\"{}\"> \
-        <center> \
-        <br><br> \
-        <h2>⚠ ERROR ⚠</h2> \
-        😱 Oh no! 😱<br> \
-        The page is still being baked 👩‍🍳 <br> \
-        😞 Come back after some time 😞\
-        </center> \
-    </body> \
-</html>".format(style_string % (36), bgcolor_error)
