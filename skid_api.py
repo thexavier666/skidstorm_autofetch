@@ -18,10 +18,11 @@ country_list = {v: k for k, v in country_list.items()}
 def get_clan_score(clan_id, req_type='public'):
     clan_player_list    = []
     country_code        = 'ALL'
-    clan_id_list        = config.clan_id_single_dict[clan_id]
 
     if req_type == 'private':
         clan_id_list    = config.clan_id_dict[clan_id]
+    elif req_type == 'public':
+        clan_id_list    = config.clan_id_single_dict[clan_id]
 
     init_rank           = 1
     player_db           = config.player_db_file.format(country_code)
