@@ -22,6 +22,23 @@ clan_id_dict = {
         'vudu' : ['164222','181859'],
         'free' : ['0']}
 
+clan_id_single_dict = {
+        'revo_main'     : ['93633'],
+        'revo_fresher'  : ['123276'],
+        'revo_origins'  : ['119234'],
+        'revo_legacy'   : ['126321'],
+
+        'cyre_main'     : ['138751'],
+        'cyre_second'   : ['190261'],
+
+        'espa'          : ['150634'],
+        'noss'          : ['188811'],
+        'sx'            : ['163287'],
+        'flux'          : ['178377'],
+        'rush'          : ['50230'],
+        'vudu'          : ['164222'],
+        'free'          : ['0']}
+
 # number of pages to be fetched for entire world
 num_pages_fetch_world = 11
 
@@ -32,7 +49,8 @@ num_pages_fetch_country = 1
 country_list = [  'au', \
         'br','us','ca','mx', \
         'cn','in','id','kr','jp', \
-        'pt','de','pl','it','se','nl','fr','be','es','gb']
+        'pt','de','pl','it','se','nl','fr','be','es','gb', \
+        'fi', 'dk']
 
 # checking if app is running in local machine or heroku
 def is_heroku_env():

@@ -15,10 +15,14 @@ from config_dir import config_html
 country_list = json.load(open(config.country_list_db,'r'))
 country_list = {v: k for k, v in country_list.items()}
 
-def get_clan_score(clan_id):
+def get_clan_score(clan_id, req_type='public'):
     clan_player_list    = []
     country_code        = 'ALL'
-    clan_id_list        = config.clan_id_dict[clan_id]
+    clan_id_list        = config.clan_id_single_dict[clan_id]
+
+    if req_type == 'private':
+        clan_id_list    = config.clan_id_dict[clan_id]
+
     init_rank           = 1
     player_db           = config.player_db_file.format(country_code)
 
@@ -138,15 +142,17 @@ def fetch_player_full_details(device_id,rank_val):
 
     row = q['profile']
 
+    country_id  = country_list[row['country']].upper()
+    clan_tag    = get_player_clan(row)
+
     game_win    = int(row['wins'])
     game_total  = int(row['gamesPlayed'])
     win_ratio   = "%.2f" % round(float(game_win*100/game_total),2)
-    acc_created = row['created'].split(' ')[0]
-    last_login  = row['last_login'].split(' ')[0]
-    clan_tag    = get_player_clan(row)
-    country_id  = country_list[row['country']].upper()
     time_played = second_to_days_hours(int(row['profile']['timePlayed']))
     time_played = '{0:02.0f} Days {1:02.0f} Hours {2:02.0f} Mins'.format(*time_played)
+
+    acc_created = row['created'].split(' ')[0]
+    last_login  = row['last_login'].split(' ')[0]
     
     resp_dict[rank_val] = {
             'name'          :row['username'],
@@ -215,7 +221,7 @@ def check_clan_id(player_data):
 
     return player_data
 
-def open_player_full_db(ret_type='html'):
+def open_player_full_db(ret_type='html',req_type='public'):
     
     player_full_db = config.player_full_db_file
     
@@ -226,7 +232,7 @@ def open_player_full_db(ret_type='html'):
         player_full_data = json.load(json_file)
     
     if ret_type == 'html':
-        return dict_to_html(player_full_data)
+        return dict_to_html(player_full_data,req_type)
     elif ret_type == 'json':
         return player_full_data
     
@@ -370,9 +376,9 @@ def season_end_page(diff_day):
 
     return big_string
     
-def dict_to_html(player_dict):
+def dict_to_html(player_dict, req_type='public'):
     col_header = ['Rank','Username','Player ID','Country','Clan Tag', \
-            'Trophies (Current)','Trophies (Legendary)','Trophies (Highest Ever)', \
+            'Trophies<br>(Current)','Trophies<br>(Legendary)','Trophies<br>(Highest Ever)', \
             'Matches Won','Matches Played','Win Ratio','Time Played', \
             'Diamonds','Coins','Gasoline Buckets','VIP Level','VIP Experience','Level', \
             'App Version','Account Created','App Last Login','One Signal','Device ID',]
@@ -381,66 +387,78 @@ def dict_to_html(player_dict):
     style_string        = config_html.style_string
     table_preamble      = config_html.table_preamble
     bgcolor_database    = config_html.bgcolor_database
+    num_col             = 0
 
     big_string = '<html>{}{}<body bgcolor=\"{}\">'.format(responsive_string,style_string % (12),bgcolor_database)
 
     big_string += table_preamble
 
-    big_string += \
-            "<tr> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-                <td class=\"table-heading\" nowrap><b>{}</b></td> \
-            </tr>".format(*col_header)
+    if req_type == 'public':
+        num_col = 12
+    elif req_type == 'private':
+        num_col = 23
+
+    table_string = '<tr>'
+    for i in range(num_col):
+        table_string += "<td class=\"table-heading\" nowrap><b>{}</b></td>"
+
+    col_header = col_header[0:num_col]
+    table_string = table_string.format(*col_header)
+    table_string += '</tr>'
+
+    big_string += table_string
 
     for key in player_dict:
-        tmp_list = list(player_dict[key].values())
-        big_string += \
-            "<tr> \
-                <td class=\"num_type\">{}</td> \
-                <td nowrap>{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td align=\"center\">{}</td> \
-                <td align=\"center\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td nowrap class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td>{}</td> \
-                <td nowrap>{}</td> \
-                <td nowrap>{}</td> \
-                <td nowrap>{}</td> \
-                <td>{}</td> \
-            </tr>".format(key,*tmp_list)
+        tmp_list  = list(player_dict[key].values())
+        tmp_list  = tmp_list[0:num_col]
+        table_row = ''
+
+        if req_type == 'public':
+            table_row = \
+                "<tr> \
+                    <td class=\"num_type\">{}</td> \
+                    <td nowrap>{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td align=\"center\">{}</td> \
+                    <td align=\"center\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td nowrap>{}</td> \
+                </tr>".format(key,*tmp_list)
+
+        elif req_type == 'private':
+            table_row = \
+                "<tr> \
+                    <td class=\"num_type\">{}</td> \
+                    <td nowrap>{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td align=\"center\">{}</td> \
+                    <td align=\"center\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td nowrap>{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
+                    <td align=\"center\">{}</td> \
+                    <td align=\"center\">{}</td> \
+                    <td align=\"center\">{}</td> \
+                    <td nowrap>{}</td> \
+                    <td nowrap>{}</td> \
+                </tr>".format(key,*tmp_list)
+
+        big_string += table_row
 
     big_string += '</table></body></html>'
 
@@ -479,17 +497,20 @@ def main():
 
     create_data_dir()
 
-    bottle.route('/',                                           method='GET')(get_static_page)
-    bottle.route('/<page_name>',                                method='GET')(get_static_page)
-    bottle.route('/api/get_rank/<num_results>/<country_code>',  method='GET')(get_all_ranks)
+    bottle.route('/',                                               method='GET')(get_static_page)
+    bottle.route('/<page_name>',                                    method='GET')(get_static_page)
+    bottle.route('/api/get_rank/<num_results>/<country_code>',      method='GET')(get_all_ranks)
 
-    bottle.route('/gen/show_rank/<country_code>/<ret_type>',    method='GET')(open_player_db)
-    bottle.route('/gen/show_rank/<country_code>',               method='GET')(open_player_db)
-    bottle.route('/gen/get_season_end',                         method='GET')(get_season_end)
+    bottle.route('/gen/show_rank/<country_code>/<ret_type>',        method='GET')(open_player_db)
+    bottle.route('/gen/show_rank/<country_code>',                   method='GET')(open_player_db)
+    bottle.route('/gen/get_season_end',                             method='GET')(get_season_end)
+    bottle.route('/gen/get_full_details',                           method='GET')(open_player_full_db)
+    bottle.route('/gen/get_clan_score/<clan_id>',                   method='GET')(get_clan_score)
 
-    bottle.route('/secret/get_clan_score/<clan_id>',            method='GET')(get_clan_score)
-    bottle.route('/secret/get_full_details/<ret_type>',         method='GET')(open_player_full_db)
-    bottle.route('/secret/get_full_details',                    method='GET')(open_player_full_db)
+    bottle.route('/secret/get_clan_score/<clan_id>/<req_type>',     method='GET')(get_clan_score)
+    bottle.route('/secret/get_full_details',                        method='GET')(open_player_full_db)
+    bottle.route('/secret/get_full_details/<ret_type>',             method='GET')(open_player_full_db)
+    bottle.route('/secret/get_full_details/<ret_type>/<req_type>',  method='GET')(open_player_full_db)
 
     bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
 
