@@ -115,7 +115,7 @@ def get_full_details():
             init_val   += 1
 
             if sys.argv[1] == '1':
-                print('[FULL_DB] Fetched details for {}'.format(device_id))
+                print('[INFO] Fetched details for {}'.format(device_id))
 
     with open(player_full_db, 'w') as fp:
         json.dump(player_dict, fp)
@@ -317,13 +317,13 @@ def fetch_data_infinite(num_results_world,num_results_country,fetch_interval, co
 
     while True:
         if sys.argv[1] == '1':
-            print('[HALF_DB] Fetching for country ALL')
+            print('[INFO] Fetching for country ALL')
 
         get_all_ranks(num_results_world,'ALL',size_per_fetch)
 
         for country in country_list:
             if sys.argv[1] == '1':
-                print('[HALF_DB] Fetching for country {}'.format(country))
+                print('[INFO] Fetching for country {}'.format(country))
 
             get_all_ranks(num_results_country,country,size_per_fetch)
         

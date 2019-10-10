@@ -50,7 +50,6 @@ def fetch_interval():
     else:
         sleep_dur = 300
     
-    print("Number of sleeps - {}".format(sleep_dur))
     return sleep_dur
 
 fetch_interval_big_db = 1800
@@ -69,5 +68,4 @@ def full_detail_num_entries():
     else:
         num_fetch = 5
     
-    print("Number of entries - {}".format(num_fetch))
     return num_fetch
