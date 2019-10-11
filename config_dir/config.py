@@ -37,6 +37,9 @@ clan_id_single_dict = {
         'flux'          : ['178377'],
         'rush'          : ['50230'],
         'vudu'          : ['164222'],
+        'p100'          : ['147490'],
+        'cn_clan'       : ['187006'],
+        'swe'           : ['837'],
         'free'          : ['0']}
 
 # number of pages to be fetched for entire world

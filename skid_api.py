@@ -45,6 +45,8 @@ def get_clan_score(clan_id, req_type='public'):
                 clan_player_list.append(tmp)
 
                 init_rank += 1
+        
+        clan_player_list = clan_player_list[0:20]
 
         total_score = get_clan_score_total(clan_player_list)
 
@@ -385,7 +387,6 @@ def do_clan_score():
     player_id_list = player_id_list.split('\n')
     player_id_list = list(filter(None,player_id_list))
     player_id_list = list(map(int,player_id_list))
-    #player_id_list = list(map(str,player_id_list))
 
     player_full_db = config.player_full_db_file
     init_rank = 1
