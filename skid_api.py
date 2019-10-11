@@ -376,6 +376,47 @@ def season_end_page(diff_day):
     <center></body></html>".format(style_string % (36),bgcolor_season_end,diff_day,date_end_str)
 
     return big_string
+
+def open_img_clan_score():
+    return config_html.possible_clan_score
+
+def do_clan_score():
+    player_id_list = bottle.request.forms.get('player_id_list')
+    player_id_list = player_id_list.split('\n')
+    player_id_list = list(filter(None,player_id_list))
+    player_id_list = list(map(int,player_id_list))
+    #player_id_list = list(map(str,player_id_list))
+
+    player_full_db = config.player_full_db_file
+    init_rank = 1
+
+    while os.path.exists(player_full_db) == False:
+        time.sleep(1)
+
+    clan_player_list = []
+    print(player_id_list)
+
+    with open(player_full_db,'r') as json_file:
+        player_full_data = json.load(json_file)
+
+        for user_id_val in player_id_list:
+            for key in player_full_data:
+                if player_full_data[key]['user_id'] == user_id_val:
+
+                    tmp = [ init_rank, \
+                            player_full_data[key]['name'], \
+                            player_full_data[key]['trophies'], \
+                            player_full_data[key]['leg_trophies'], \
+                            player_full_data[key]['clan_tag']]
+
+                    clan_player_list.append(tmp)
+
+                    init_rank += 1
+                    break
+
+        total_score = get_clan_score_total(clan_player_list[0:20])
+
+        return list_to_html(clan_player_list,total_score)
     
 def dict_to_html(player_dict, req_type='public'):
     col_header = ['Rank','Username','Player ID','Country','Clan Tag', \
@@ -512,6 +553,8 @@ def main():
     bottle.route('/secret/get_full_details',                        method='GET')(open_player_full_db)
     bottle.route('/secret/get_full_details/<ret_type>',             method='GET')(open_player_full_db)
     bottle.route('/secret/get_full_details/<ret_type>/<req_type>',  method='GET')(open_player_full_db)
+    bottle.route('/secret/img_clan_score',                           method='GET')(open_img_clan_score)
+    bottle.route('/secret/do_clan_score',                           method='POST')(do_clan_score)
 
     bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
 
