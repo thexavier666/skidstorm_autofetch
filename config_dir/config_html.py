@@ -66,3 +66,22 @@ possible_clan_score = \
 </html>
 '''.format(responsive_string, style_string % 24, bgcolor_clan_score)
 
+season_end_string = \
+'''
+<html>
+    {}
+    <body bgcolor="{}">
+        <center> 
+            <br><br>
+            Season ends in
+            <br><br><b>
+            {} days
+            </b><br><br>
+            which is on
+            <br><br><b>
+            {} GMT
+            </b>
+        <center>
+    </body>
+</html>
+'''

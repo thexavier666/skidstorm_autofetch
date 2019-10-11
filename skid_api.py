@@ -132,7 +132,7 @@ def get_full_details():
 
 def get_player_clan(each_player):
     if each_player['profile']['clan'] == '{}':
-        return '--'
+        return '----'
     else:
         return each_player['profile']['clan']['tag']
 
@@ -220,8 +220,8 @@ def check_clan_id(player_data):
         player_data['clan_name'] is None:
 
         player_data['clan_id']      = '0'
-        player_data['clan_tag']     = '--'
-        player_data['clan_name']    = '--'
+        player_data['clan_tag']     = '----'
+        player_data['clan_name']    = '----'
 
     return player_data
 
@@ -265,7 +265,7 @@ def open_player_db(country_code,ret_type='html'):
 
 def list_to_html(player_list, total_score = 0):
 
-    col_header = ['Sl. No.', 'Name', 'Trophies (Current)', 'Trophies (Legendary)', 'Clan']
+    col_header = ['Sl. No.', 'Name', 'Trophies<br>(Current)', 'Trophies<br>(Legendary)', 'Clan']
 
     style_string        = config_html.style_string
     responsive_string   = config_html.responsive_string
@@ -364,21 +364,16 @@ def get_season_end():
 
 def season_end_page(diff_day):
 
-    date_end_dict = config.season_end
-    date_end_str = '{} / {} / {}'.format(date_end_dict['dd'],date_end_dict['mm'],date_end_dict['yyyy'])
+    date_end_dict       = config.season_end
+    date_end_str        = '{} / {} / {}'.format(date_end_dict['dd'],date_end_dict['mm'],date_end_dict['yyyy'])
+    diff_day            = (diff_day[0:2]).strip()
 
-    diff_day = (diff_day[0:2]).strip()
+    style_string        = config_html.style_string
+    bgcolor_season_end  = config_html.bgcolor_season_end
 
-    style_string = config_html.style_string
-    bgcolor_season_end = config_html.bgcolor_season_end
+    season_end_string   = config_html.season_end_string.format(style_string % (36),bgcolor_season_end,diff_day,date_end_str)
 
-    big_string = \
-    "<html>{}<body bgcolor=\"{}\"><center> \
-        <br><br>Season ends in<br><br><b>{} days</b><br><br> \
-        which is on<br><br><b>{} GMT</b> \
-    <center></body></html>".format(style_string % (36),bgcolor_season_end,diff_day,date_end_str)
-
-    return big_string
+    return season_end_string 
 
 def open_img_clan_score():
     return config_html.possible_clan_score
@@ -390,13 +385,11 @@ def do_clan_score():
     player_id_list = list(map(int,player_id_list))
 
     player_full_db = config.player_full_db_file
-    init_rank = 1
 
     while os.path.exists(player_full_db) == False:
         time.sleep(1)
 
     clan_player_list = []
-    print(player_id_list)
 
     with open(player_full_db,'r') as json_file:
         player_full_data = json.load(json_file)
@@ -405,16 +398,21 @@ def do_clan_score():
             for key in player_full_data:
                 if player_full_data[key]['user_id'] == user_id_val:
 
-                    tmp = [ init_rank, \
+                    tmp = [ 0, \
                             player_full_data[key]['name'], \
                             player_full_data[key]['trophies'], \
                             player_full_data[key]['leg_trophies'], \
                             player_full_data[key]['clan_tag']]
-
                     clan_player_list.append(tmp)
 
-                    init_rank += 1
                     break
+
+        clan_player_list = sorted(clan_player_list, key=lambda x:x[2], reverse=True)
+
+        init_rank = 1
+        for row in clan_player_list:
+            row[0] = init_rank
+            init_rank += 1
 
         total_score = get_clan_score_total(clan_player_list[0:20])
 
