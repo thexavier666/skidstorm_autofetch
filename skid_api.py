@@ -45,8 +45,9 @@ def get_clan_score(clan_id, req_type='public'):
                 clan_player_list.append(tmp)
 
                 init_rank += 1
-        
-        clan_player_list = clan_player_list[0:20]
+       
+        if req_type == 'public':
+            clan_player_list = clan_player_list[0:20]
 
         total_score = get_clan_score_total(clan_player_list)
 
@@ -437,7 +438,7 @@ def dict_to_html(player_dict, req_type='public'):
     big_string += table_preamble
 
     if req_type == 'public':
-        num_col = 12
+        num_col = 11
     elif req_type == 'private':
         num_col = 23
 
@@ -470,7 +471,6 @@ def dict_to_html(player_dict, req_type='public'):
                     <td class=\"num_type\">{}</td> \
                     <td class=\"num_type\">{}</td> \
                     <td class=\"num_type\">{}</td> \
-                    <td nowrap>{}</td> \
                 </tr>".format(key,*tmp_list)
 
         elif req_type == 'private':

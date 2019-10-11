@@ -50,7 +50,7 @@ possible_clan_score = \
         <ul>
             <li>Enter the player IDs in a list format</li>
             <li>Do not use comma or extra space around the IDs</li>
-            <li>Find the full list of IDs <a href="./gen/get_full_details">here</a></li>
+            <li>Find the full list of IDs <a href="/gen/get_full_details">here</a></li>
         </ul>
         <br>
         <br>
