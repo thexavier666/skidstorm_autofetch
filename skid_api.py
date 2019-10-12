@@ -580,8 +580,8 @@ def main():
     fetch_interval_big_db   = config.fetch_interval_big_db
     country_list            = config.country_list
 
-    create_empty_json()
     create_data_dir()
+    create_empty_json()
 
     thread_player_db = threading.Thread(target=fetch_data_infinite, \
             args=(num_pages_fetch_world,num_pages_fetch_country, \
