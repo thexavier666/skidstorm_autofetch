@@ -134,7 +134,7 @@ def get_player_clan(each_player):
     if each_player['profile']['clan'] == '{}':
         return '----'
     else:
-        return each_player['profile']['clanTag']
+        return each_player['profile']['clan']['tag']
 
 def fetch_player_full_details(device_id,rank_val):
     url_str = 'http://api.skidstorm.cmcm.com/v2/profile/{}'.format(device_id)
