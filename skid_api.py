@@ -8,6 +8,7 @@ import os
 import bottle
 import datetime
 import sys
+import datetime
 
 from config_dir import config
 from config_dir import config_html
@@ -329,24 +330,82 @@ def fetch_data_infinite(num_results_world,num_results_country,fetch_interval, co
         if sys.argv[1] == '1':
             print('[INFO] Fetching for country ALL')
 
+        store_datetime(datetime.datetime.now(),'before_ALL')
+
         get_all_ranks(num_results_world,'ALL',size_per_fetch)
 
+        store_datetime(datetime.datetime.now(),'after_ALL')
+        
+        store_datetime(datetime.datetime.now(),'before_country')
+    
         for country in country_list:
             if sys.argv[1] == '1':
                 print('[INFO] Fetching for country {}'.format(country))
-
+    
             get_all_ranks(num_results_country,country,size_per_fetch)
         
+        store_datetime(datetime.datetime.now(),'after_country')
+
+        store_datetime(datetime.datetime.now(),'before_full')
+
         get_full_details()
+
+        store_datetime(datetime.datetime.now(),'after_full')
 
         if sys.argv[1] == '1':
             print('[INFO] Going to sleep for {} seconds'.format(fetch_interval))
 
         time.sleep(fetch_interval)
 
+def open_time_data():
+    date_json = config.date_json_filename
+
+    date_obj = datetime.datetime.now()
+    current_time_str = date_obj.strftime("%-I:%M:%S %p, %d %b %Y") 
+
+    with open(date_json,'r') as fp:
+        date_dict = json.loads(fp.read())
+
+        tmp_string = config_html.date_file_string
+
+        webpage_string = tmp_string.format( \
+                config_html.responsive_string,
+                config_html.style_string,
+                config_html.bgcolor_database,
+                current_time_str,
+                date_dict['before_ALL'],
+                date_dict['after_ALL'],
+                date_dict['before_country'],
+                date_dict['after_country'],
+                date_dict['before_full'],
+                date_dict['after_full'])
+
+        return webpage_string
+
+def store_datetime(date_obj,date_id):
+    date_json = config.date_json_filename
+    date_dict = {}
+
+    with open(date_json,'r') as fp:
+        date_dict = json.loads(fp.read())
+        date_dict[date_id] = date_obj.strftime("%-I:%M:%S %p, %d %b %Y")
+
+    json.dump(date_dict, open(date_json,'w'))
+
 def create_data_dir():
     if os.path.exists(config.player_db_file_dir) == False:
         os.mkdir(config.player_db_file_dir)
+
+def create_empty_json():
+    date_json = config.date_json_filename
+
+    if os.path.exists(date_json) == False:
+
+        from subprocess import call
+
+        cmd_str = "echo \"{}\" >> %s" % (date_json)
+
+        call(cmd_str, shell=True)
 
 def get_season_end():
     date_end_dict = config.season_end
@@ -521,6 +580,9 @@ def main():
     fetch_interval_big_db   = config.fetch_interval_big_db
     country_list            = config.country_list
 
+    create_empty_json()
+    create_data_dir()
+
     thread_player_db = threading.Thread(target=fetch_data_infinite, \
             args=(num_pages_fetch_world,num_pages_fetch_country, \
             fetch_interval, country_list,))
@@ -532,8 +594,6 @@ def main():
     thread_detail_db.start()
     '''
 
-    create_data_dir()
-
     bottle.route('/',                                               method='GET')(get_static_page)
     bottle.route('/<page_name>',                                    method='GET')(get_static_page)
     bottle.route('/api/get_rank/<num_results>/<country_code>',      method='GET')(get_all_ranks)
@@ -543,12 +603,13 @@ def main():
     bottle.route('/gen/get_season_end',                             method='GET')(get_season_end)
     bottle.route('/gen/get_full_details',                           method='GET')(open_player_full_db)
     bottle.route('/gen/get_clan_score/<clan_id>',                   method='GET')(get_clan_score)
+    bottle.route('/gen/get_time_data',                             method='GET')(open_time_data)
 
     bottle.route('/secret/get_clan_score/<clan_id>/<req_type>',     method='GET')(get_clan_score)
     bottle.route('/secret/get_full_details',                        method='GET')(open_player_full_db)
     bottle.route('/secret/get_full_details/<ret_type>',             method='GET')(open_player_full_db)
     bottle.route('/secret/get_full_details/<ret_type>/<req_type>',  method='GET')(open_player_full_db)
-    bottle.route('/secret/img_clan_score',                           method='GET')(open_img_clan_score)
+    bottle.route('/secret/img_clan_score',                          method='GET')(open_img_clan_score)
     bottle.route('/secret/do_clan_score',                           method='POST')(do_clan_score)
 
     bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)

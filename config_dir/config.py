@@ -10,6 +10,8 @@ player_full_db_file = player_db_file_dir + 'player_full_db.json'
 # list of countries with their numeric code
 country_list_db     = 'config_dir/country_code.json'
 
+date_json_filename  = player_db_file_dir + 'all_event_time.json'
+
 # ID of clans
 clan_id_dict = {
         'revo' : ['93633','123276','119234','126321'],

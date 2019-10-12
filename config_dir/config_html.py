@@ -85,3 +85,49 @@ season_end_string = \
     </body>
 </html>
 '''
+
+date_file_string = \
+'''
+<html>
+    {}{}
+    <body bgcolor="{}">
+        <center> 
+            <br><br>
+            <h1>Webapp Update Status</h1>
+            <br>
+            <h3>Current time : {}</h3>
+            <br>
+            <table>
+                <tr>
+                    <td class="table-heading"><b>Fetch Event</b></td>
+                    <td class="table-heading"><b>Time of Event</b></td>
+                </tr>
+                <tr>
+                    <td>Small database starts</td>
+                    <td class="num_type">{}</td>
+                </tr>
+                <tr>
+                    <td>Small database ends</td>
+                    <td class="num_type">{}</td>
+                </tr>
+                <tr>
+                    <td>Country database starts</td>
+                    <td class="num_type">{}</td>
+                </tr>
+                <tr>
+                    <td>Country database ends</td>
+                    <td class="num_type">{}</td>
+                </tr>
+                <tr>
+                    <td>Large database starts</td>
+                    <td class="num_type">{}</td>
+                </tr>
+                <tr>
+                    <td>Large database ends</td>
+                    <td class="num_type">{}</td>
+                </tr>
+            </table>
+        <center>
+    </body>
+</html>
+'''
