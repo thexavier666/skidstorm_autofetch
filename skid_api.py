@@ -61,7 +61,7 @@ def get_clan_score_total(clan_player_list):
     total_score = 0
 
     for i in range(len(ratio_val)):
-        sub_group = clan_player_list[init_rank:init_rank+5]
+        sub_group = clan_player_list[init_rank:init_rank+group_size]
 
         for j in range(len(sub_group)):
             total_score += sub_group[j][2] * ratio_val[i]
@@ -134,7 +134,7 @@ def get_player_clan(each_player):
     if each_player['profile']['clan'] == '{}':
         return '----'
     else:
-        return each_player['profile']['clan']['tag']
+        return each_player['profile']['clanTag']
 
 def fetch_player_full_details(device_id,rank_val):
     url_str = 'http://api.skidstorm.cmcm.com/v2/profile/{}'.format(device_id)
@@ -419,11 +419,6 @@ def do_clan_score():
         return list_to_html(clan_player_list,total_score)
     
 def dict_to_html(player_dict, req_type='public'):
-    col_header = ['Rank','Username','Player ID','Country','Clan Tag', \
-            'Trophies<br>(Current)','Trophies<br>(Legendary)','Trophies<br>(Highest Ever)', \
-            'Matches Won','Matches Played','Win Ratio','Time Played', \
-            'Diamonds','Coins','Gasoline Buckets','VIP Level','VIP Experience','Level', \
-            'App Version','Account Created','App Last Login','One Signal','Device ID',]
 
     responsive_string   = config_html.responsive_string
     style_string        = config_html.style_string
@@ -444,9 +439,10 @@ def dict_to_html(player_dict, req_type='public'):
     for i in range(num_col):
         table_string += "<td class=\"table-heading\" nowrap><b>{}</b></td>"
 
-    col_header = col_header[0:num_col]
-    table_string = table_string.format(*col_header)
-    table_string += '</tr>'
+    col_header      = config.col_header
+    col_header      = col_header[0:num_col]
+    table_string    = table_string.format(*col_header)
+    table_string   += '</tr>'
 
     big_string += table_string
 

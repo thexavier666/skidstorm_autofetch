@@ -42,6 +42,14 @@ clan_id_single_dict = {
         'swe'           : ['837'],
         'free'          : ['0']}
 
+# List of all data fetched
+# Used as column header in the full database webpage
+col_header = ['Rank','Username','Player ID','Country','Clan Tag', \
+            'Trophies<br>(Current)','Trophies<br>(Legendary)','Trophies<br>(Highest Ever)', \
+            'Matches Won','Matches Played','Win Ratio','Time Played', \
+            'Diamonds','Coins','Gasoline Buckets','VIP<br>Experience','VIP<br>Level','Level', \
+            'App Version','Account<br>Created','Account<br>Last Login','One Signal','Device ID',]
+
 # number of pages to be fetched for entire world
 num_pages_fetch_world = 11
 
