@@ -100,3 +100,12 @@ def full_detail_num_entries():
         num_fetch = 5
     
     return num_fetch
+
+empty_db = { \
+        "server_started":"----",
+        "before_ALL"    :"----",
+        "after_ALL"     :"----",
+        "before_country":"----",
+        "after_country" :"----",
+        "before_full"   :"----",
+        "after_full"    :"----"}

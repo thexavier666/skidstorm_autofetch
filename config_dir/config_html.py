@@ -127,6 +127,9 @@ date_file_string = \
                     <td class="num_type">{}</td>
                 </tr>
             </table>
+            <br>
+            <h3>Server started at : {}</h3>
+            <br>
         <center>
     </body>
 </html>

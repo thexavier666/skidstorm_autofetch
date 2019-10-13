@@ -378,7 +378,8 @@ def open_time_data():
                 date_dict['before_country'],
                 date_dict['after_country'],
                 date_dict['before_full'],
-                date_dict['after_full'])
+                date_dict['after_full'],
+                date_dict['server_started'])
 
         return webpage_string
 
@@ -401,11 +402,10 @@ def create_empty_json():
 
     if os.path.exists(date_json) == False:
 
-        from subprocess import call
+        empty_db = config.empty_db
 
-        cmd_str = "echo \"{}\" >> %s" % (date_json)
-
-        call(cmd_str, shell=True)
+        with open(date_json,'w') as fp:
+            json.dump(empty_db,fp)
 
 def get_season_end():
     date_end_dict = config.season_end
@@ -582,6 +582,7 @@ def main():
 
     create_data_dir()
     create_empty_json()
+    store_datetime(datetime.datetime.now(),'server_started')
 
     thread_player_db = threading.Thread(target=fetch_data_infinite, \
             args=(num_pages_fetch_world,num_pages_fetch_country, \
