@@ -132,10 +132,16 @@ def get_full_details():
     return player_dict
 
 def get_player_clan(each_player):
-    if each_player['profile']['clan'] == '{}':
-        return '----'
-    else:
-        return each_player['profile']['clan']['tag']
+    clan_tag = ''
+    clan_id  = ''
+    try:
+        clan_tag = each_player['clanTag']
+        clan_id  = each_player['clanId']
+    except KeyError:
+        clan_tag = '----'
+        clan_id  = '----'
+
+    return clan_tag,clan_id
 
 def fetch_player_full_details(device_id,rank_val):
     url_str = 'http://api.skidstorm.cmcm.com/v2/profile/{}'.format(device_id)
@@ -148,7 +154,8 @@ def fetch_player_full_details(device_id,rank_val):
     row = q['profile']
 
     country_id  = country_list[row['country']].upper()
-    clan_tag    = get_player_clan(row)
+    clan_tag, \
+    clan_id     = get_player_clan(row)
 
     game_win    = int(row['wins'])
     game_total  = int(row['gamesPlayed'])
@@ -164,6 +171,7 @@ def fetch_player_full_details(device_id,rank_val):
             'user_id'       :row['id'],
             'country_id'    :country_id,
             'clan_tag'      :clan_tag,
+            'clan_id'       :clan_id,
 
             'trophies'      :row['rank'],
             'leg_trophies'  :row['legendaryTrophies'],
@@ -294,10 +302,10 @@ def list_to_html(player_list, total_score = 0):
         big_string += \
             "<tr> \
                 <td class=\"num_type\">{}</td> \
-                <td>{}</td> \
+                <td nowrap>{}</td> \
                 <td class=\"num_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \
-                <td>{}</td> \
+                <td nowrap>{}</td> \
             </tr>".format(row[0],row[1],row[2],row[3],row[4])
 
     big_string += '</table></body></html>'
@@ -490,9 +498,9 @@ def dict_to_html(player_dict, req_type='public'):
     big_string += table_preamble
 
     if req_type == 'public':
-        num_col = 11
+        num_col = 12
     elif req_type == 'private':
-        num_col = 23
+        num_col = 24
 
     table_string = '<tr>'
     for i in range(num_col):
@@ -524,6 +532,7 @@ def dict_to_html(player_dict, req_type='public'):
                     <td class=\"num_type\">{}</td> \
                     <td class=\"num_type\">{}</td> \
                     <td class=\"num_type\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
                 </tr>".format(key,*tmp_list)
 
         elif req_type == 'private':
@@ -534,6 +543,7 @@ def dict_to_html(player_dict, req_type='public'):
                     <td class=\"num_type\">{}</td> \
                     <td align=\"center\">{}</td> \
                     <td align=\"center\">{}</td> \
+                    <td class=\"num_type\">{}</td> \
                     <td class=\"num_type\">{}</td> \
                     <td class=\"num_type\">{}</td> \
                     <td class=\"num_type\">{}</td> \
@@ -578,7 +588,7 @@ def main():
     num_pages_fetch_country = config.num_pages_fetch_country
     fetch_interval          = config.fetch_interval()
     fetch_interval_big_db   = config.fetch_interval_big_db
-    country_list            = config.country_list
+    country_list            = config.country_list()
 
     create_data_dir()
     create_empty_json()

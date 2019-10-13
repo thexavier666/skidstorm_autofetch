@@ -46,11 +46,11 @@ clan_id_single_dict = {
 
 # List of all data fetched
 # Used as column header in the full database webpage
-col_header = ['Rank','Username','Player ID','Country','Clan Tag', \
+col_header = ['Rank','Username','Player ID','Country','Clan Tag', 'Clan ID', \
             'Trophies<br>(Current)','Trophies<br>(Legendary)','Trophies<br>(Highest Ever)', \
             'Matches Won','Matches Played','Win Ratio','Time Played', \
             'Diamonds','Coins','Gasoline Buckets','VIP<br>Experience','VIP<br>Level','Level', \
-            'App Version','Account<br>Created','Account<br>Last Login','One Signal','Device ID',]
+            'App Version','Account<br>Created On','Account<br>Last Login','One Signal','Device ID',]
 
 # number of pages to be fetched for entire world
 num_pages_fetch_world = 11
@@ -59,11 +59,19 @@ num_pages_fetch_world = 11
 num_pages_fetch_country = 1
 
 # list of countries from which data is to be fetched
-country_list = [  'au', \
-        'br','us','ca','mx', \
-        'cn','in','id','kr','jp', \
-        'pt','de','pl','it','se','nl','fr','be','es','gb', \
-        'fi', 'dk']
+def country_list():
+    country_list = []
+    if is_heroku_env() is True:
+        country_list = [  'au', \
+                'br','us','ca','mx', \
+                'cn','in','id','kr','jp', \
+                'pt','de','pl','it','se','nl','fr','be','es','gb', \
+                'fi', 'dk']
+
+    else:
+        country_list = [ 'au' ]
+
+    return country_list
 
 # checking if app is running in local machine or heroku
 def is_heroku_env():
@@ -97,7 +105,7 @@ def full_detail_num_entries():
     if is_heroku_env() is True: 
         num_fetch = 1000
     else:
-        num_fetch = 5
+        num_fetch = 80
     
     return num_fetch
 
