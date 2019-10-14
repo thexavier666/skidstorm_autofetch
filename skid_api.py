@@ -17,8 +17,7 @@ country_list = json.load(open(config.country_list_db,'r'))
 country_list = {v: k for k, v in country_list.items()}
 
 def get_clan_score(clan_id, req_type='public'):
-    clan_player_list    = []
-    country_code        = 'ALL'
+    clan_player_dict    = {}
 
     if req_type == 'private':
         clan_id_list    = config.clan_id_dict[clan_id]
@@ -26,33 +25,57 @@ def get_clan_score(clan_id, req_type='public'):
         clan_id_list    = config.clan_id_single_dict[clan_id]
 
     init_rank           = 1
-    player_db           = config.player_db_file.format(country_code)
+    player_full_db      = config.player_full_db_file
 
-    while os.path.exists(player_db) == False:
-        time.sleep(1)
+    if os.path.exists(player_full_db) == False:
+        return get_static_page('error.html') 
 
-    with open(player_db,'r') as json_file:
+    with open(player_full_db,'r') as json_file:
         player_data = json.load(json_file)
 
+        tmp_dict = {}
+
+        print('Clan list {}'.format(clan_id_list))
+
         for key in player_data:
-            if player_data[key]['clan_id'] in clan_id_list:
+            print('Checking {}'.format(player_data[key]['clan_id']))
+            if str(player_data[key]['clan_id']) in clan_id_list:
+                print('MATCH')
 
-                tmp = [ init_rank, \
-                        player_data[key]['name'], \
-                        player_data[key]['trophies'], \
-                        player_data[key]['leg_trophies'], \
-                        player_data[key]['clan_name']]
+                tmp_dict[init_rank] = {
+                        'name'          :player_data[key]['name'],
+                        'user_id'       :player_data[key]['user_id'],
+                        'country_id'    :player_data[key]['country_id'],
+                        'clan_tag'      :player_data[key]['clan_tag'],
+                        'clan_id'       :player_data[key]['clan_id'],
 
-                clan_player_list.append(tmp)
+                        'trophies'      :player_data[key]['trophies'],
+                        'leg_trophies'  :player_data[key]['leg_trophies'],
+                        'max_trophies'  :player_data[key]['max_trophies'],
+
+                        'game_win'      :player_data[key]['game_win'],
+                        'game_total'    :player_data[key]['game_total'],
+                        'win_ratio'     :player_data[key]['win_ratio']}
+
+                clan_player_dict = {**clan_player_dict, **tmp_dict}
 
                 init_rank += 1
        
         if req_type == 'public':
-            clan_player_list = clan_player_list[0:20]
+            from itertools import islice
+            clan_player_dict = dict(islice(clan_player_dict.items(),20))
 
-        total_score = get_clan_score_total(clan_player_list)
+        total_score = get_clan_score_total(get_clan_score_from_dict(clan_player_dict))
 
-        return list_to_html(clan_player_list,total_score)
+        return dict_to_html(clan_player_dict,total_score)
+
+def get_clan_score_from_dict(clan_player_dict):
+    just_clan_score = []
+
+    for key in clan_player_dict:
+        just_clan_score.append(clan_player_dict[key]['trophies'])
+
+    return just_clan_score
 
 def get_clan_score_total(clan_player_list):
 
@@ -65,7 +88,7 @@ def get_clan_score_total(clan_player_list):
         sub_group = clan_player_list[init_rank:init_rank+group_size]
 
         for j in range(len(sub_group)):
-            total_score += sub_group[j][2] * ratio_val[i]
+            total_score += sub_group[j] * ratio_val[i]
 
         init_rank += group_size
 
@@ -245,7 +268,7 @@ def open_player_full_db(ret_type='html',req_type='public'):
         player_full_data = json.load(json_file)
     
     if ret_type == 'html':
-        return dict_to_html(player_full_data,req_type)
+        return dict_to_html(player_full_data,0,req_type)
     elif ret_type == 'json':
         return player_full_data
     
@@ -456,36 +479,41 @@ def do_clan_score():
     while os.path.exists(player_full_db) == False:
         time.sleep(1)
 
-    clan_player_list = []
+    clan_player_dict = {}
 
     with open(player_full_db,'r') as json_file:
-        player_full_data = json.load(json_file)
-
-        for user_id_val in player_id_list:
-            for key in player_full_data:
-                if player_full_data[key]['user_id'] == user_id_val:
-
-                    tmp = [ 0, \
-                            player_full_data[key]['name'], \
-                            player_full_data[key]['trophies'], \
-                            player_full_data[key]['leg_trophies'], \
-                            player_full_data[key]['clan_tag']]
-                    clan_player_list.append(tmp)
-
-                    break
-
-        clan_player_list = sorted(clan_player_list, key=lambda x:x[2], reverse=True)
+        player_data = json.load(json_file)
 
         init_rank = 1
-        for row in clan_player_list:
-            row[0] = init_rank
-            init_rank += 1
 
-        total_score = get_clan_score_total(clan_player_list[0:20])
+        for user_id_val in player_id_list:
+            for key in player_data:
+                if player_data[key]['user_id'] == user_id_val:
 
-        return list_to_html(clan_player_list,total_score)
+                    tmp_dict[init_rank] = {
+                            'name'          :player_data[key]['name'],
+                            'user_id'       :player_data[key]['user_id'],
+                            'country_id'    :player_data[key]['country_id'],
+                            'clan_tag'      :player_data[key]['clan_tag'],
+                            'clan_id'       :player_data[key]['clan_id'],
+
+                            'trophies'      :player_data[key]['trophies'],
+                            'leg_trophies'  :player_data[key]['leg_trophies'],
+                            'max_trophies'  :player_data[key]['max_trophies'],
+
+                            'game_win'      :player_data[key]['game_win'],
+                            'game_total'    :player_data[key]['game_total'],
+                            'win_ratio'     :player_data[key]['win_ratio']}
+
+                    clan_player_dict = {**clan_player_dict, **tmp_dict}
+                    init_rank += 1
+                    break
+
+        total_score = get_clan_score_total(get_clan_score_from_dict(clan_player_dict))
+
+        return dict_to_html(clan_player_list,total_score)
     
-def dict_to_html(player_dict, req_type='public'):
+def dict_to_html(player_dict, clan_score=0, req_type='public'):
 
     responsive_string   = config_html.responsive_string
     style_string        = config_html.style_string
@@ -495,12 +523,23 @@ def dict_to_html(player_dict, req_type='public'):
 
     big_string = '<html>{}{}<body bgcolor=\"{}\">'.format(responsive_string,style_string % (12),bgcolor_database)
 
+    if clan_score != 0:
+        score_html = \
+        '''
+        <center>
+            <h2>Clan : {}</h2><br>
+            <h2>Total Score : {}</h2>
+        </center>
+        '''.format(player_dict[1]['clan_tag'],clan_score)
+        big_string += score_html
+
     big_string += table_preamble
 
     if req_type == 'public':
         num_col = 12
     elif req_type == 'private':
         num_col = 24
+
 
     table_string = '<tr>'
     for i in range(num_col):
@@ -614,10 +653,9 @@ def main():
     bottle.route('/gen/get_season_end',                             method='GET')(get_season_end)
     bottle.route('/gen/get_full_details',                           method='GET')(open_player_full_db)
     bottle.route('/gen/get_clan_score/<clan_id>',                   method='GET')(get_clan_score)
-    bottle.route('/gen/get_time_data',                             method='GET')(open_time_data)
+    bottle.route('/gen/get_time_data',                              method='GET')(open_time_data)
 
     bottle.route('/secret/get_clan_score/<clan_id>/<req_type>',     method='GET')(get_clan_score)
-    bottle.route('/secret/get_full_details',                        method='GET')(open_player_full_db)
     bottle.route('/secret/get_full_details/<ret_type>',             method='GET')(open_player_full_db)
     bottle.route('/secret/get_full_details/<ret_type>/<req_type>',  method='GET')(open_player_full_db)
     bottle.route('/secret/img_clan_score',                          method='GET')(open_img_clan_score)
