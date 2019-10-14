@@ -24,7 +24,6 @@ def get_clan_score(clan_id, req_type='public'):
     elif req_type == 'public':
         clan_id_list    = config.clan_id_single_dict[clan_id]
 
-    init_rank           = 1
     player_full_db      = config.player_full_db_file
 
     if os.path.exists(player_full_db) == False:
@@ -33,14 +32,11 @@ def get_clan_score(clan_id, req_type='public'):
     with open(player_full_db,'r') as json_file:
         player_data = json.load(json_file)
 
-        tmp_dict = {}
-
-        print('Clan list {}'.format(clan_id_list))
+        tmp_dict    = {}
+        init_rank   = 1
 
         for key in player_data:
-            print('Checking {}'.format(player_data[key]['clan_id']))
             if str(player_data[key]['clan_id']) in clan_id_list:
-                print('MATCH')
 
                 tmp_dict[init_rank] = {
                         'name'          :player_data[key]['name'],
@@ -297,7 +293,7 @@ def open_player_db(country_code,ret_type='html'):
 
 def list_to_html(player_list, total_score = 0):
 
-    col_header = ['Sl. No.', 'Name', 'Trophies<br>(Current)', 'Trophies<br>(Legendary)', 'Clan']
+    col_header = ['Rank', 'Name', 'Trophies<br>(Current)', 'Trophies<br>(Legendary)', 'Clan']
 
     style_string        = config_html.style_string
     responsive_string   = config_html.responsive_string
@@ -469,22 +465,22 @@ def open_img_clan_score():
     return config_html.possible_clan_score
 
 def do_clan_score():
+    player_full_db = config.player_full_db_file
+
+    if os.path.exists(player_full_db) == False:
+        return get_static_page('error.html') 
+
+    clan_player_dict = {}
     player_id_list = bottle.request.forms.get('player_id_list')
     player_id_list = player_id_list.split('\n')
     player_id_list = list(filter(None,player_id_list))
     player_id_list = list(map(int,player_id_list))
 
-    player_full_db = config.player_full_db_file
-
-    while os.path.exists(player_full_db) == False:
-        time.sleep(1)
-
-    clan_player_dict = {}
-
     with open(player_full_db,'r') as json_file:
         player_data = json.load(json_file)
 
         init_rank = 1
+        tmp_dict  = {}
 
         for user_id_val in player_id_list:
             for key in player_data:
@@ -511,7 +507,7 @@ def do_clan_score():
 
         total_score = get_clan_score_total(get_clan_score_from_dict(clan_player_dict))
 
-        return dict_to_html(clan_player_list,total_score)
+        return dict_to_html(clan_player_dict,total_score)
     
 def dict_to_html(player_dict, clan_score=0, req_type='public'):
 
@@ -527,8 +523,8 @@ def dict_to_html(player_dict, clan_score=0, req_type='public'):
         score_html = \
         '''
         <center>
-            <h2>Clan : {}</h2><br>
-            <h2>Total Score : {}</h2>
+            <h1>Clan : {}</h1><br>
+            <h1>Total Score : {}</h1>
         </center>
         '''.format(player_dict[1]['clan_tag'],clan_score)
         big_string += score_html

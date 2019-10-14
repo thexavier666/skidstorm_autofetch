@@ -22,7 +22,7 @@ clan_id_dict = {
         'flux' : ['178377'],
         'rush' : ['50230'],
         'vudu' : ['164222','181859'],
-        'free' : ['0']}
+        'free' : ['----']}
 
 clan_id_single_dict = {
         'revo_main'     : ['93633'],
@@ -53,7 +53,7 @@ col_header = ['Rank','Username','Player ID','Country','Clan Tag', 'Clan ID', \
             'App Version','Account<br>Created On','Account<br>Last Login','One Signal','Device ID',]
 
 # number of pages to be fetched for entire world
-num_pages_fetch_world = 11
+num_pages_fetch_world = 10
 
 # number of pages to be fetched for a single country 
 num_pages_fetch_country = 1
