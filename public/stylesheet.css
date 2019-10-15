@@ -1,0 +1,22 @@
+body {
+	font-family: 'Share Tech Mono';
+	font-size: 24px;
+}
+ul {
+	width: 50%;
+	margin: auto;
+	display:table;
+}
+.header{
+	background: #3b5998;
+	text-align: center;
+	color: white;
+}
+.header-alt{
+	background: #d9534f;
+	text-align: center;
+	color: white;
+}
+.body{
+	background: #8b9dc3;
+}

@@ -298,12 +298,19 @@ def list_to_html(player_list, total_score = 0):
     style_string        = config_html.style_string
     responsive_string   = config_html.responsive_string
     table_preamble      = config_html.table_preamble
-    bgcolor_clan        = config_html.bgcolor_clan
+    bgcolor_database    = config_html.bgcolor_database
 
-    big_string = '<html>{}{}<body bgcolor=\"{}\">'.format(responsive_string,style_string % (12),bgcolor_clan)
+    big_string = '<html>{}{}<body bgcolor=\"{}\">'.format(responsive_string,style_string,bgcolor_database)
 
     if total_score != 0:
-        score_string = '<center><h1>Clan Score - {}</h1></center>'.format(total_score)
+        score_string = \
+        '''
+        <div class="header">
+            <br>
+            <h1>Clan Score - {}</h1>
+            <br>
+        </div><br>
+        '''.format(total_score)
         big_string += score_string
 
     big_string += table_preamble
@@ -398,15 +405,15 @@ def open_time_data():
         webpage_string = tmp_string.format( \
                 config_html.responsive_string,
                 config_html.style_string,
-                config_html.bgcolor_database,
+                config_html.bgcolor_body,
                 current_time_str,
+                date_dict['server_started'],
                 date_dict['before_ALL'],
                 date_dict['after_ALL'],
                 date_dict['before_country'],
                 date_dict['after_country'],
                 date_dict['before_full'],
-                date_dict['after_full'],
-                date_dict['server_started'])
+                date_dict['after_full'])
 
         return webpage_string
 
@@ -455,9 +462,10 @@ def season_end_page(diff_day):
     diff_day            = (diff_day[0:2]).strip()
 
     style_string        = config_html.style_string
-    bgcolor_season_end  = config_html.bgcolor_season_end
+    responsive_string   = config_html.responsive_string
+    bgcolor_body        = config_html.bgcolor_body
 
-    season_end_string   = config_html.season_end_string.format(style_string % (36),bgcolor_season_end,diff_day,date_end_str)
+    season_end_string   = config_html.season_end_string.format(responsive_string,style_string,bgcolor_body,diff_day,date_end_str)
 
     return season_end_string 
 
@@ -517,15 +525,17 @@ def dict_to_html(player_dict, clan_score=0, req_type='public'):
     bgcolor_database    = config_html.bgcolor_database
     num_col             = 0
 
-    big_string = '<html>{}{}<body bgcolor=\"{}\">'.format(responsive_string,style_string % (12),bgcolor_database)
+    big_string = '<html>{}{}<body bgcolor=\"{}\">'.format(responsive_string,style_string,bgcolor_database)
 
     if clan_score != 0:
         score_html = \
         '''
-        <center>
-            <h1>Clan : {}</h1><br>
-            <h1>Total Score : {}</h1>
-        </center>
+        <div class="header">
+            <br>
+            <h1>Clan : {}</h1>
+            <h2>Total Score : {}</h1>
+            <br>
+        </div><br>
         '''.format(player_dict[1]['clan_tag'],clan_score)
         big_string += score_html
 

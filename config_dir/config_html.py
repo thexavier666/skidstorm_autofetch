@@ -1,39 +1,56 @@
-bgcolor_clan        = '#98c4ff'
-bgcolor_season_end  = '#e0a899'
-bgcolor_database    = '#ffc0cb'
-bgcolor_clan_score  = '#c7b1ac'
+bgcolor_database    = '#ffffff'
+bgcolor_body        = '#ffffff'
+
+css_style_string = \
+'''
+.header{
+	background: #3b5998;
+	text-align: center;
+	color: white;
+}
+.header-alt{
+	background: #d9534f;
+	text-align: center;
+	color: white;
+}
+body{
+	font-family: 'Space Mono', monospace;
+	font-size: 12px;
+}
+.text-alt{
+	font-family: 'Space Mono', monospace;
+	font-size: 24px;
+}
+table{
+	border:1px solid grey;
+	margin-left:auto;
+	margin-right:auto;
+}
+td.num_type{
+	text-align: right;
+}
+table td + td {
+	border-left:1px solid gray;
+}
+.table-heading {
+	border-bottom:1px solid gray;
+	text-align:center;
+        background:#3b79a9;
+        color:#ffffff;
+}
+ul {
+	display:table;
+	margin:0 auto;
+}
+'''
 
 style_string = \
 '''
 <head>
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" rel="stylesheet">
-    <style>
-        body{
-            font-family: 'Roboto Mono', monospace;
-            font-size: %dpx;
-        }
-        table{
-            border:1px solid grey;
-            margin-left:auto;
-            margin-right:auto;
-        }
-        td.num_type{
-            text-align: right;
-        }
-        table td + td {
-            border-left:1px solid gray;
-        }
-        .table-heading {
-            border-bottom:1px solid gray;
-            text-align:center;
-        }
-        ul {
-            display:table;
-            margin:0 auto;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css?family=Space+Mono&display=swap" rel="stylesheet">
+    <style>{}</style>
 </head>
-'''
+'''.format(css_style_string)
 
 responsive_string = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
 
@@ -44,14 +61,20 @@ possible_clan_score = \
 <html>
     {}{}
     <body bgcolor={}>
+        <div class="header-alt">
+            <br>
+            <h1>Calculate Dream Team Score</h1>
+            <br>
+        </div>
         <br>
-        <br>
-        <h2><center>Calculate Dream Team Score</center></h2>
-        <ul>
-            <li>Enter the player IDs in a list format</li>
-            <li>Do not use comma or extra space around the IDs</li>
-            <li>Find the full list of IDs <a href="/gen/get_full_details">here</a></li>
-        </ul>
+        <div class="text-alt">
+            <ul>
+                <li>Enter the player IDs in a list format</li>
+                <li>Do not use comma or extra space around the IDs</li>
+                <li>Find the full list of IDs <a href="/gen/get_full_details">here</a></li>
+                <li>Enter the player IDs in the order of their RANKS</li>
+            </ul>
+        </div>
         <br>
         <br>
         <center>
@@ -64,23 +87,24 @@ possible_clan_score = \
         </center>
     </body>
 </html>
-'''.format(responsive_string, style_string % 24, bgcolor_clan_score)
+'''.format(responsive_string, style_string, bgcolor_body)
 
 season_end_string = \
 '''
 <html>
-    {}
+    {}{}
     <body bgcolor="{}">
+        <div class="header">
+            <br>
+            <h1>Season End Status</h1>
+            <br>
+        </div>
         <center> 
             <br><br>
-            Season ends in
-            <br><br><b>
-            {} days
-            </b><br><br>
-            which is on
-            <br><br><b>
-            {} GMT
-            </b>
+            <h1>Season ends in</h1>
+            <h2>{} days</h2>
+            <h1>which is on</h1>
+            <h2>{} GMT</h2>
         <center>
     </body>
 </html>
@@ -91,11 +115,16 @@ date_file_string = \
 <html>
     {}{}
     <body bgcolor="{}">
-        <center> 
-            <br><br>
+        <div class="header">
+            <br>
             <h1>Webapp Update Status</h1>
             <br>
-            <h3>Current time : {}</h3>
+            <h3>Current time is : {}</h3>
+            <h3>Server ON since : {}</h3>
+            <br>
+        </div>
+        <br>
+        <center> 
             <br>
             <table>
                 <tr>
@@ -127,9 +156,6 @@ date_file_string = \
                     <td class="num_type">{}</td>
                 </tr>
             </table>
-            <br>
-            <h3>Server started at : {}</h3>
-            <br>
         <center>
     </body>
 </html>
