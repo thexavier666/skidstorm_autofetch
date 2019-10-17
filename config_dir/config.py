@@ -29,10 +29,8 @@ clan_id_single_dict = {
         'revo_fresher'  : ['123276'],
         'revo_origins'  : ['119234'],
         'revo_legacy'   : ['126321'],
-
         'cyre_main'     : ['138751'],
         'cyre_second'   : ['190261'],
-
         'espa'          : ['150634'],
         'noss'          : ['188811'],
         'sx'            : ['163287'],
@@ -44,13 +42,50 @@ clan_id_single_dict = {
         'swe'           : ['837'],
         'free'          : ['0']}
 
+def col_header_key(req_type='public'):
+    col_header_key = [ \
+            'rank','name','user_id', \
+            'country_id','clan_tag','trophies', \
+            'leg_trophies','max_trophies','game_win', \
+            'game_total','win_ratio','app_version','player_level']
+
+    if req_type == 'private':
+        col_header_key_private = [ \
+                'time_played','diamonds','coins', \
+                'gasoline','vip_level','vip_exp', \
+                'acc_created','last_login']
+
+        col_header_key += col_header_key_private
+
+    return col_header_key
+
 # List of all data fetched
 # Used as column header in the full database webpage
-col_header = ['Rank','Username','Player ID','Country','Clan Tag', 'Clan ID', \
-            'Trophies<br>(Current)','Trophies<br>(Legendary)','Trophies<br>(Highest Ever)', \
-            'Matches Won','Matches Played','Win Ratio','Time Played', \
-            'Diamonds','Coins','Gasoline Buckets','VIP<br>Experience','VIP<br>Level','Level', \
-            'App Version','Account<br>Created On','Account<br>Last Login','One Signal','Device ID',]
+col_header = { \
+        'rank'          :['num_type','Rank'                      ],
+        'name'          :['str_type','Username'                  ],
+        'user_id'       :['num_type','Player ID'                 ],
+        'country_id'    :['cen_type','Country'                   ],
+        'clan_tag'      :['cen_type','Clan Tag'                  ],
+        'clan_id'       :['num_type','Clan ID'                   ],
+        'trophies'      :['num_type','Trophies<br>(Current)'     ],
+        'leg_trophies'  :['num_type','Trophies<br>(Legendary)'   ],
+        'max_trophies'  :['num_type','Trophies<br>(Highest Ever)'],
+        'game_win'      :['num_type','Matches Won'               ],
+        'game_total'    :['num_type','Matches Played'            ],
+        'win_ratio'     :['num_type','Win Ratio'                 ],
+        'time_played'   :['cen_type','Time Played'               ],
+        'diamonds'      :['num_type','Diamonds'                  ],
+        'coins'         :['num_type','Coins'                     ],
+        'gasoline'      :['num_type','Gasoline Buckets'          ],
+        'vip_exp'       :['num_type','VIP<br>Experience'         ],
+        'vip_level'     :['num_type','VIP<br>Level'              ],
+        'player_level'  :['num_type','Level'                     ],
+        'app_version'   :['cen_type','App Version'               ],
+        'acc_created'   :['cen_type','Account<br>Created On'     ],
+        'last_login'    :['cen_type','Account<br>Last Login'     ],
+        'one_signal'    :['str_type','One Signal'                ],
+        'device_id'     :['str_type','Device ID'                 ]}
 
 # number of pages to be fetched for entire world
 num_pages_fetch_world = 10
@@ -73,7 +108,6 @@ def country_list():
                 'cn','in','id','kr','jp', \
                 'pt','de','pl','it','se','nl','fr','be','es','gb', \
                 'fi', 'dk']
-
     else:
         country_list = [ 'au' ]
 
@@ -111,7 +145,7 @@ def full_detail_num_entries():
     if is_heroku_env() is True: 
         num_fetch = 1000
     else:
-        num_fetch = 80
+        num_fetch = 80 
     
     return num_fetch
 

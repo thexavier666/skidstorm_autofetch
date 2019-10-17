@@ -29,6 +29,14 @@ table{
 td.num_type{
 	text-align: right;
 }
+td.cen_type{
+        white-space: nowrap;
+	text-align: center;
+}
+td.str_type{
+	text-align: left;
+        white-space: nowrap;
+}
 table td + td {
 	border-left:1px solid gray;
 }

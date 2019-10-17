@@ -29,31 +29,34 @@ def get_clan_score(clan_id, req_type='public'):
     with open(player_full_db,'r') as json_file:
         player_data = json.load(json_file)
 
-        tmp_dict    = {}
-        init_rank   = 1
+        init_rank           = 1
+        col_header_key      = config.col_header_key()
 
+        # for all the players in the main DB
         for key in player_data:
             if str(player_data[key]['clan_id']) in clan_id_list:
 
-                tmp_dict[init_rank] = {
+                tmp_dict = {}
+
+                tmp_dict[init_rank] = { \
+                        'rank'          :player_data[key]['rank'],
                         'name'          :player_data[key]['name'],
                         'user_id'       :player_data[key]['user_id'],
                         'country_id'    :player_data[key]['country_id'],
                         'clan_tag'      :player_data[key]['clan_tag'],
-                        'clan_id'       :player_data[key]['clan_id'],
-
                         'trophies'      :player_data[key]['trophies'],
                         'leg_trophies'  :player_data[key]['leg_trophies'],
                         'max_trophies'  :player_data[key]['max_trophies'],
-
                         'game_win'      :player_data[key]['game_win'],
                         'game_total'    :player_data[key]['game_total'],
-                        'win_ratio'     :player_data[key]['win_ratio']}
+                        'win_ratio'     :player_data[key]['win_ratio'],
+                        'app_version'   :player_data[key]['app_version'],
+                        'player_level'  :player_data[key]['player_level']}
 
                 clan_player_dict = {**clan_player_dict, **tmp_dict}
 
                 init_rank += 1
-       
+
         if req_type == 'public':
             from itertools import islice
             clan_player_dict = dict(islice(clan_player_dict.items(),20))
@@ -184,28 +187,25 @@ def fetch_player_full_details(device_id,rank_val):
     last_login  = row['last_login'].split(' ')[0]
     
     resp_dict[rank_val] = {
+            'rank'          :rank_val,
             'name'          :row['username'],
             'user_id'       :row['id'],
             'country_id'    :country_id,
             'clan_tag'      :clan_tag,
             'clan_id'       :clan_id,
-
             'trophies'      :row['rank'],
             'leg_trophies'  :row['legendaryTrophies'],
             'max_trophies'  :row['economy']['maxRank'],
-
             'game_win'      :row['wins'],
             'game_total'    :row['gamesPlayed'],
             'win_ratio'     :str(win_ratio),
             'time_played'   :str(time_played),
-
             'diamonds'      :row['economy']['diamonds'],
             'coins'         :row['economy']['coins'],
             'gasoline'      :row['economy']['gasolineBucket'],
-            'vip_level'     :row['economy']['vipInfo']['vipExp'],
-            'vip_exp'       :row['economy']['vipInfo']['vipMaxLevel'],
+            'vip_level'     :row['economy']['vipInfo']['vipMaxLevel'],
+            'vip_exp'       :row['economy']['vipInfo']['vipExp'],
             'player_level'  :row['economy']['xp']['level'],
-
             'app_version'   :row['version'],
             'acc_created'   :str(acc_created),
             'last_login'    :str(last_login),
@@ -326,10 +326,10 @@ def list_to_html(player_list, total_score = 0):
         big_string += \
             "<tr> \
                 <td class=\"num_type\">{}</td> \
-                <td nowrap>{}</td> \
+                <td class=\"str_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \
                 <td class=\"num_type\">{}</td> \
-                <td nowrap>{}</td> \
+                <td class=\"cen_type\">{}</td> \
             </tr>".format(row[0],row[1],row[2],row[3],row[4])
 
     big_string += '</table></body></html>'
@@ -485,27 +485,32 @@ def do_clan_score():
     with open(player_full_db,'r') as json_file:
         player_data = json.load(json_file)
 
-        init_rank = 1
-        tmp_dict  = {}
+        init_rank      = 1
+        tmp_dict       = {}
+        col_header_key = config.col_header_key()
 
+        # for every ID in the user given list
         for user_id_val in player_id_list:
-            for key in player_data:
-                if player_data[key]['user_id'] == user_id_val:
 
-                    tmp_dict[init_rank] = {
+            # for all the players in the main DB
+            for key in player_data:
+
+                # if the player ID matches the current player ID
+                if player_data[key]['user_id'] == user_id_val:
+                    tmp_dict[init_rank] = { \
+                            'rank'          :player_data[key]['rank'],
                             'name'          :player_data[key]['name'],
                             'user_id'       :player_data[key]['user_id'],
                             'country_id'    :player_data[key]['country_id'],
                             'clan_tag'      :player_data[key]['clan_tag'],
-                            'clan_id'       :player_data[key]['clan_id'],
-
                             'trophies'      :player_data[key]['trophies'],
                             'leg_trophies'  :player_data[key]['leg_trophies'],
                             'max_trophies'  :player_data[key]['max_trophies'],
-
                             'game_win'      :player_data[key]['game_win'],
                             'game_total'    :player_data[key]['game_total'],
-                            'win_ratio'     :player_data[key]['win_ratio']}
+                            'win_ratio'     :player_data[key]['win_ratio'],
+                            'app_version'   :player_data[key]['app_version'],
+                            'player_level'  :player_data[key]['player_level']}
 
                     clan_player_dict = {**clan_player_dict, **tmp_dict}
                     init_rank += 1
@@ -521,7 +526,7 @@ def dict_to_html(player_dict, clan_score=0, req_type='public'):
     style_string        = config_html.style_string
     table_preamble      = config_html.table_preamble
     bgcolor_database    = config_html.bgcolor_database
-    num_col             = 0
+    col_header_list     = [] 
 
     big_string = '<html>{}{}<body bgcolor=\"{}\">'.format(responsive_string,style_string,bgcolor_database)
 
@@ -539,74 +544,29 @@ def dict_to_html(player_dict, clan_score=0, req_type='public'):
 
     big_string += table_preamble
 
-    if req_type == 'public':
-        num_col = 12
-    elif req_type == 'private':
-        num_col = 24
-
-
-    table_string = '<tr>'
-    for i in range(num_col):
-        table_string += "<td class=\"table-heading\" nowrap><b>{}</b></td>"
-
+    col_header_key  = config.col_header_key(req_type)
     col_header      = config.col_header
-    col_header      = col_header[0:num_col]
-    table_string    = table_string.format(*col_header)
-    table_string   += '</tr>'
 
+    # creating table header
+    table_string = '<tr>'
+    for i in col_header_key:
+        table_string += "<td class=\"table-heading\" nowrap>{}</td>".format(col_header[i][1])
+    table_string += '</tr>'
+
+    # adding table header to main string
     big_string += table_string
 
     for key in player_dict:
-        tmp_list  = list(player_dict[key].values())
-        tmp_list  = tmp_list[0:num_col]
-        table_row = ''
 
-        if req_type == 'public':
-            table_row = \
-                "<tr> \
-                    <td class=\"num_type\">{}</td> \
-                    <td nowrap>{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td align=\"center\">{}</td> \
-                    <td align=\"center\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                </tr>".format(key,*tmp_list)
+        # creating single row for a player
+        table_row = '<tr>'
 
-        elif req_type == 'private':
-            table_row = \
-                "<tr> \
-                    <td class=\"num_type\">{}</td> \
-                    <td nowrap>{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td align=\"center\">{}</td> \
-                    <td align=\"center\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td nowrap>{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td class=\"num_type\">{}</td> \
-                    <td align=\"center\">{}</td> \
-                    <td align=\"center\">{}</td> \
-                    <td align=\"center\">{}</td> \
-                    <td nowrap>{}</td> \
-                    <td nowrap>{}</td> \
-                </tr>".format(key,*tmp_list)
+        for i in col_header_key:
+            table_row += '<td class={}>{}</td>'.format(col_header[i][0], player_dict[key][i])
 
+        table_row += '</tr>'
+
+        # adding player row to main string
         big_string += table_row
 
     big_string += '</table></body></html>'
