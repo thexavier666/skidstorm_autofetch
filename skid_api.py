@@ -13,9 +13,6 @@ import datetime
 from config_dir import config
 from config_dir import config_html
 
-country_list = json.load(open(config.country_list_db,'r'))
-country_list = {v: k for k, v in country_list.items()}
-
 def get_clan_score(clan_id, req_type='public'):
     clan_player_dict    = {}
 
@@ -172,7 +169,8 @@ def fetch_player_full_details(device_id,rank_val):
 
     row = q['profile']
 
-    country_id  = country_list[row['country']].upper()
+    country_db  = config.country_db()
+    country_id  = country_db[row['country']].upper()
     clan_tag, \
     clan_id     = get_player_clan(row)
 

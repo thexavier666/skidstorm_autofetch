@@ -58,6 +58,12 @@ num_pages_fetch_world = 10
 # number of pages to be fetched for a single country 
 num_pages_fetch_country = 1
 
+def country_db():
+    import json
+    country_dict = json.load(open(country_list_db,'r'))
+    country_dict = {v: k for k, v in country_dict.items()}
+    return country_dict
+
 # list of countries from which data is to be fetched
 def country_list():
     country_list = []
