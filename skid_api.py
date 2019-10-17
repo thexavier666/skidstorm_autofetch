@@ -289,7 +289,7 @@ def open_player_db(country_code,ret_type='html'):
         elif ret_type == 'json':
             return player_data
 
-def list_to_html(player_list, total_score = 0):
+def list_to_html(player_list):
 
     col_header = ['Rank', 'Name', 'Trophies<br>(Current)', 'Trophies<br>(Legendary)', 'Clan']
 
@@ -299,17 +299,6 @@ def list_to_html(player_list, total_score = 0):
     bgcolor_database    = config_html.bgcolor_database
 
     big_string = '<html>{}{}<body bgcolor=\"{}\">'.format(responsive_string,style_string,bgcolor_database)
-
-    if total_score != 0:
-        score_string = \
-        '''
-        <div class="header">
-            <br>
-            <h1>Clan Score - {}</h1>
-            <br>
-        </div><br>
-        '''.format(total_score)
-        big_string += score_string
 
     big_string += table_preamble
 
@@ -573,18 +562,6 @@ def dict_to_html(player_dict, clan_score=0, req_type='public'):
 
     return big_string
 
-'''
-# this code is disabled 
-# because running 2 threads are disabled in heroku
-
-def fetch_full_data_infinite(fetch_interval):
-
-    while True:
-        get_full_details()
-        print("FULL DATA FETCTCHED")
-        time.sleep(fetch_interval)
-'''
-
 def main():
 
     num_pages_fetch_world   = config.num_pages_fetch_world
@@ -601,12 +578,6 @@ def main():
             args=(num_pages_fetch_world,num_pages_fetch_country, \
             fetch_interval, country_list,))
     thread_player_db.start()
-
-    '''
-    thread_detail_db = threading.Thread(target=fetch_full_data_infinite, \
-            args=(fetch_interval_big_db,))
-    thread_detail_db.start()
-    '''
 
     bottle.route('/',                                               method='GET')(get_static_page)
     bottle.route('/<page_name>',                                    method='GET')(get_static_page)
