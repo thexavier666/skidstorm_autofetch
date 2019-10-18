@@ -94,9 +94,10 @@ possible_clan_score = \
             <input value="Calculate Score" type="submit" />
             </form>
         </center>
+        {}
     </body>
 </html>
-'''.format(responsive_string, style_string, bgcolor_body)
+'''.format(responsive_string, style_string, bgcolor_body, page_ending)
 
 season_end_string = \
 '''
@@ -115,6 +116,7 @@ season_end_string = \
             <h1>which is on</h1>
             <h2>{} GMT</h2>
         <center>
+        {}
     </body>
 </html>
 '''
@@ -135,7 +137,7 @@ date_file_string = \
         <br>
         <center> 
             <br>
-            <table>
+            <table cellpadding="5">
                 <tr>
                     <td class="table-heading"><b>Fetch Event</b></td>
                     <td class="table-heading"><b>Time of Event</b></td>
@@ -166,6 +168,23 @@ date_file_string = \
                 </tr>
             </table>
         <center>
+        {}
     </body>
 </html>
+'''
+
+page_ending = \
+'''
+<center>
+	<br>
+	<h2><a href="./index.html" style="text-decoration:none">🏠</a></h2>
+	<br>
+	<br>
+	If you want to donate, 
+	you can Paypal at 
+	<a href="https://paypal.me/thexavier666">thexavier666</a>
+	<br>
+	<br>
+	<i>Brought to you by xavier666 ❤️</i>
+</center>
 '''

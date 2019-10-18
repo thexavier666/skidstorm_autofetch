@@ -88,7 +88,7 @@ col_header = { \
         'device_id'     :['str_type','Device ID'                 ]}
 
 # number of pages to be fetched for entire world
-num_pages_fetch_world = 10
+num_pages_fetch_world = 5
 
 # number of pages to be fetched for a single country 
 num_pages_fetch_country = 1
@@ -109,7 +109,11 @@ def country_list():
                 'pt','de','pl','it','se','nl','fr','be','es','gb', \
                 'fi', 'dk']
     else:
-        country_list = [ 'au' ]
+        country_list = [  'au', \
+                'br','us','ca','mx', \
+                'cn','in','id','kr','jp', \
+                'pt','de','pl','it','se','nl','fr','be','es','gb', \
+                'fi', 'dk']
 
     return country_list
 
@@ -127,12 +131,12 @@ def fetch_interval():
     if is_heroku_env() is True:
         sleep_dur = 1800
     else:
-        sleep_dur = 300
+        sleep_dur = 600
     
     return sleep_dur
 
 # number of player details to be fetched per page
-size_per_fetch = 100
+size_per_fetch = 200
 
 # season end date
 season_end = {'dd':29,'mm':10,'yyyy':2019}
@@ -143,7 +147,7 @@ def full_detail_num_entries():
     if is_heroku_env() is True: 
         num_fetch = 1000
     else:
-        num_fetch = 80 
+        num_fetch = 1000
     
     return num_fetch
 

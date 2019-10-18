@@ -39,7 +39,7 @@ def get_clan_score(clan_id, req_type='public'):
                 tmp_dict = {}
 
                 tmp_dict[init_rank] = { \
-                        'rank'          :player_data[key]['rank'],
+                        'rank'          :init_rank,
                         'name'          :player_data[key]['name'],
                         'user_id'       :player_data[key]['user_id'],
                         'country_id'    :player_data[key]['country_id'],
@@ -406,7 +406,8 @@ def open_time_data():
                 date_dict['before_country'],
                 date_dict['after_country'],
                 date_dict['before_full'],
-                date_dict['after_full'])
+                date_dict['after_full'],
+                config_html.page_ending)
 
         return webpage_string
 
@@ -457,8 +458,10 @@ def season_end_page(diff_day):
     style_string        = config_html.style_string
     responsive_string   = config_html.responsive_string
     bgcolor_body        = config_html.bgcolor_body
+    page_ending         = config_html.page_ending
 
-    season_end_string   = config_html.season_end_string.format(responsive_string,style_string,bgcolor_body,diff_day,date_end_str)
+    season_end_string   = config_html.season_end_string.format(responsive_string,style_string, \
+    bgcolor_body,diff_day,date_end_str,page_ending)
 
     return season_end_string 
 
