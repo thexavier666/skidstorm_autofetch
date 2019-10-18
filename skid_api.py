@@ -100,12 +100,9 @@ def get_all_ranks(num_results,country_code,fetch_page_size):
     for i in range(num_results):
 
         l_lim,u_lim = get_rank_range_limits(i, range_val)
-
-        init_rank = i*range_val + 1
-
-        resp_dict = fetch_rank_details(l_lim,u_lim,init_rank, country_code)
-
-        final_dict = {**final_dict, **resp_dict}
+        init_rank 	= i*range_val + 1
+        resp_dict 	= fetch_rank_details(l_lim,u_lim,init_rank, country_code)
+        final_dict 	= {**final_dict, **resp_dict}
 
     with open(player_db, 'w') as fp:
         json.dump(final_dict, fp)
@@ -349,7 +346,7 @@ def second_to_days_hours(time_second):
 def get_static_page(page_name='index.html'):
     return bottle.static_file(page_name, root='./public')
 
-def fetch_data_infinite(num_results_world,num_results_country,fetch_interval, country_list):
+def fetch_data_infinite(num_results_world,num_results_country,fetch_interval,country_list):
 
     size_per_fetch = config.size_per_fetch
 
