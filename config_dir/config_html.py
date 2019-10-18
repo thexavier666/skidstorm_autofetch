@@ -60,9 +60,10 @@ style_string = \
 </head>
 '''.format(css_style_string)
 
-responsive_string = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+responsive_string = \
+'''<meta name="viewport" content="width=device-width, initial-scale=1.0">'''
 
-table_preamble = '<table cellpadding=\"5\">'
+table_preamble = '''<table cellpadding="5">'''
 
 possible_clan_score = \
 '''

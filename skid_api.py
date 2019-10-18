@@ -290,36 +290,42 @@ def open_player_db(country_code,ret_type='html'):
             return player_data
 
 def list_to_html(player_list):
-
-    col_header = ['Rank', 'Name', 'Trophies<br>(Current)', 'Trophies<br>(Legendary)', 'Clan']
-
+    col_header          = config.col_header
     style_string        = config_html.style_string
     responsive_string   = config_html.responsive_string
     table_preamble      = config_html.table_preamble
     bgcolor_database    = config_html.bgcolor_database
 
-    big_string = '<html>{}{}<body bgcolor=\"{}\">'.format(responsive_string,style_string,bgcolor_database)
+    col_header_id       = ['rank', 'name', 'trophies', 'leg_trophies', 'clan_tag']
+
+    big_string = \
+    '''<html>{}{}<body bgcolor="{}">'''.format(responsive_string,style_string,bgcolor_database)
 
     big_string += table_preamble
 
-    big_string += \
-            "<tr> \
-                <td class=\"table-heading\"><b>{}</b></td> \
-                <td class=\"table-heading\"><b>{}</b></td> \
-                <td class=\"table-heading\"><b>{}</b></td> \
-                <td class=\"table-heading\"><b>{}</b></td> \
-                <td class=\"table-heading\"><b>{}</b></td> \
-            </tr>".format(*col_header)
+    # creating table header
+    table_string = '<tr>'
+    for i in col_header_id:
+        table_string += '''<td class="table-heading" nowrap>{}</td>'''.format(col_header[i][1])
+    table_string += '</tr>'
 
+    # adding table header to main html
+    big_string += table_string
+
+    # creating player table
     for row in player_list:
-        big_string += \
-            "<tr> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"str_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"num_type\">{}</td> \
-                <td class=\"cen_type\">{}</td> \
-            </tr>".format(row[0],row[1],row[2],row[3],row[4])
+
+        # creating row for a single player
+        table_row = '<tr>'
+        for i in range(len(col_header_id)):
+
+            table_row += '''<td class={}>{}</td>'''.format( \
+                col_header[col_header_id[i]][0], row[i])
+
+        table_row += '</tr>'
+ 
+        # adding row to main html
+        big_string += table_row
 
     big_string += '</table></body></html>'
 
@@ -567,7 +573,6 @@ def main():
     num_pages_fetch_world   = config.num_pages_fetch_world
     num_pages_fetch_country = config.num_pages_fetch_country
     fetch_interval          = config.fetch_interval()
-    fetch_interval_big_db   = config.fetch_interval_big_db
     country_list            = config.country_list()
 
     create_data_dir()

@@ -131,8 +131,6 @@ def fetch_interval():
     
     return sleep_dur
 
-fetch_interval_big_db = 1800
-
 # number of player details to be fetched per page
 size_per_fetch = 100
 
