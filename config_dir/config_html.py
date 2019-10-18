@@ -13,6 +13,10 @@ css_style_string = \
 	text-align: center;
 	color: white;
 }
+.alt-footer{
+	text-align: center;
+	font-size: 20px;
+}
 body{
 	font-family: 'Space Mono', monospace;
 	font-size: 12px;
@@ -64,6 +68,22 @@ responsive_string = \
 '''<meta name="viewport" content="width=device-width, initial-scale=1.0">'''
 
 table_preamble = '''<table cellpadding="5">'''
+
+page_ending = \
+'''
+<div class="alt-footer">
+	<br>
+	<h2><a href="/" style="text-decoration:none">🏠</a></h2>
+	<br>
+	<br>
+	If you want to donate, 
+	you can Paypal at 
+	<a href="https://paypal.me/thexavier666">thexavier666</a>
+	<br>
+	<br>
+	<i>Brought to you by xavier666 ❤️</i>
+</div>
+'''
 
 possible_clan_score = \
 '''
@@ -173,18 +193,3 @@ date_file_string = \
 </html>
 '''
 
-page_ending = \
-'''
-<center>
-	<br>
-	<h2><a href="./index.html" style="text-decoration:none">🏠</a></h2>
-	<br>
-	<br>
-	If you want to donate, 
-	you can Paypal at 
-	<a href="https://paypal.me/thexavier666">thexavier666</a>
-	<br>
-	<br>
-	<i>Brought to you by xavier666 ❤️</i>
-</center>
-'''
