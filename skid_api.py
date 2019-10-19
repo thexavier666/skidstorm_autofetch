@@ -597,7 +597,11 @@ def main():
     bottle.route('/secret/img_clan_score',                          method='GET')(open_img_clan_score)
     bottle.route('/secret/do_clan_score',                           method='POST')(do_clan_score)
 
-    bottle.run(host = '0.0.0.0', port = int(os.environ.get('PORT', 5000)), debug = False)
+    server_type = 'wsgiref'
+    if config.is_heroku_env() == False:
+        server_type = 'paste'
+
+    bottle.run(host = '0.0.0.0', server = server_type, port = int(os.environ.get('PORT', 5000)), debug = False)
 
 if __name__ == '__main__':
     main()
