@@ -40,6 +40,7 @@ clan_id_single_dict = {
         'p100'          : ['147490'],
         'cn_clan'       : ['187006'],
         'swe'           : ['837'],
+        'smiley'        : ['26498'],
         'free'          : ['0']}
 
 def col_header_key(req_type='public'):
@@ -51,7 +52,7 @@ def col_header_key(req_type='public'):
 
     if req_type == 'private':
         col_header_key_private = [ \
-                'time_played','diamonds','coins', \
+                'time_played','num_purchase','diamonds','coins', \
                 'gasoline','vip_level','vip_exp', \
                 'acc_created','last_login']
 
@@ -75,6 +76,7 @@ col_header = { \
         'game_total'    :['num_type','Matches Played'            ],
         'win_ratio'     :['num_type','Win Ratio'                 ],
         'time_played'   :['cen_type','Time Played'               ],
+        'num_purchase'  :['num_type','Number of<br>Purchases'    ],
         'diamonds'      :['num_type','Diamonds'                  ],
         'coins'         :['num_type','Coins'                     ],
         'gasoline'      :['num_type','Gasoline Buckets'          ],
@@ -102,20 +104,18 @@ def country_db():
 # list of countries from which data is to be fetched
 def country_list():
     country_list = []
-    if is_heroku_env() is True:
-        country_list = [  'au', \
+    country_list = [ \
+                'au','nz', \
                 'br','us','ca','mx', \
-                'cn','in','id','kr','jp', \
-                'pt','de','pl','it','se','nl','fr','be','es','gb', \
-                'fi', 'dk']
-    else:
-        country_list = [  'au', \
-                'br','us','ca','mx', \
-                'cn','in','id','kr','jp', \
-                'pt','de','pl','it','se','nl','fr','be','es','gb', \
-                'fi', 'dk']
+                'cn','in','id','kr','jp','sg','my','hk','th', \
+                'pt','de','it','nl','fr','be','es','gb','ie','gr', \
+                'pl','ro','si','hu', \
+                'se','ch','no','fi','dk']
 
-    return country_list
+    if is_heroku_env() is True:
+        return country_list
+    else:
+        return country_list
 
 # checking if app is running in local machine or heroku
 def is_heroku_env():

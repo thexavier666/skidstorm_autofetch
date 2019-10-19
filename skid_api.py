@@ -107,8 +107,6 @@ def get_all_ranks(num_results,country_code,fetch_page_size):
     with open(player_db, 'w') as fp:
         json.dump(final_dict, fp)
 
-    return final_dict
-
 def get_rank_range_limits(n, range_val):
     lower_limit = 1 + n*(range_val)
     upper_limit = lower_limit + (range_val-1)
@@ -140,12 +138,10 @@ def get_full_details():
             init_val   += 1
 
             if sys.argv[1] == '1':
-                print('[INFO] Fetched details for {}'.format(device_id))
+                print('[INFO] Fetched details for rank {}'.format(init_val-1))
 
     with open(player_full_db, 'w') as fp:
         json.dump(player_dict, fp)
-
-    return player_dict
 
 def get_player_clan(each_player):
     clan_tag = ''
@@ -197,6 +193,7 @@ def fetch_player_full_details(device_id,rank_val):
             'game_total'    :row['gamesPlayed'],
             'win_ratio'     :str(win_ratio),
             'time_played'   :str(time_played),
+            'num_purchase'  :str(len(row['economy']['purchases'])),
             'diamonds'      :row['economy']['diamonds'],
             'coins'         :row['economy']['coins'],
             'gasoline'      :row['economy']['gasolineBucket'],
@@ -242,8 +239,8 @@ def check_clan_id(player_data):
         player_data['clan_id'] is None or \
         player_data['clan_name'] is None:
 
-        player_data['clan_id']      = '0'
         player_data['clan_tag']     = '----'
+        player_data['clan_id']      = '0'
         player_data['clan_name']    = '----'
 
     return player_data
@@ -586,7 +583,6 @@ def main():
 
     bottle.route('/',                                               method='GET')(get_static_page)
     bottle.route('/<page_name>',                                    method='GET')(get_static_page)
-    bottle.route('/api/get_rank/<num_results>/<country_code>',      method='GET')(get_all_ranks)
 
     bottle.route('/gen/show_rank/<country_code>/<ret_type>',        method='GET')(open_player_db)
     bottle.route('/gen/show_rank/<country_code>',                   method='GET')(open_player_db)
