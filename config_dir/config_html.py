@@ -49,6 +49,9 @@ table td + td{
 	text-align:center;
 	background:#3b79a9;
 	color:#ffffff;
+	position:sticky;
+	top: 0;
+	z-index: 10;
 }
 ul{
 	display:table;
