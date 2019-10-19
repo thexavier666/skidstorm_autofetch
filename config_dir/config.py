@@ -89,6 +89,9 @@ col_header = { \
         'one_signal'    :['str_type','One Signal'                ],
         'device_id'     :['str_type','Device ID'                 ]}
 
+# number of player details to be fetched per page
+size_per_fetch = 200
+
 # number of pages to be fetched for entire world
 num_pages_fetch_world = 5
 
@@ -110,7 +113,7 @@ def country_list():
                 'cn','in','id','kr','jp','sg','my','hk','th', \
                 'pt','de','it','nl','fr','be','es','gb','ie','gr', \
                 'pl','ro','si','hu', \
-                'se','ch','no','fi','dk']
+                'se','ch','no','ru','fi','dk']
 
     if is_heroku_env() is True:
         return country_list
@@ -135,8 +138,6 @@ def fetch_interval():
     
     return sleep_dur
 
-# number of player details to be fetched per page
-size_per_fetch = 200
 
 # season end date
 season_end = {'dd':29,'mm':10,'yyyy':2019}
