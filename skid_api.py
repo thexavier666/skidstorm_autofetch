@@ -13,13 +13,45 @@ import datetime
 from config_dir import config
 from config_dir import config_html
 
-def get_clan_score(clan_id, req_type='public'):
+def get_clan_rank():
+
+    player_full_db = config.player_full_db_file
+    if os.path.exists(player_full_db) == False:
+        return get_static_page('error.html')
+
+    clan_id_dict = config.clan_id_single_dict
+
+    col_header = ['rank','clan_tag','clan_name','clan_score']
+    clan_rank_list = []
+
+    for key in clan_id_dict:
+
+        tmp_list = [ \
+                0,
+                clan_id_dict[key]['clan_tag'],
+                clan_id_dict[key]['clan_name'],
+                get_clan_score(key,'public',True)]
+
+        clan_rank_list.append(tmp_list)
+
+    clan_rank_list = clan_rank_list[0:-1]
+
+    sorted_clan_rank_list = sorted(clan_rank_list, key = lambda x:x[3], reverse=True)
+
+    init_pos = 1
+    for row in sorted_clan_rank_list:
+        row[0] = init_pos
+        init_pos += 1
+
+    return list_to_html(sorted_clan_rank_list, col_header)
+
+def get_clan_score(clan_id, req_type='public', score_only=False):
     clan_player_dict    = {}
 
     if req_type == 'private':
-        clan_id_list    = config.clan_id_dict[clan_id]
+        clan_id_list    = config.clan_id_dict[clan_id]['clan_id']
     elif req_type == 'public':
-        clan_id_list    = config.clan_id_single_dict[clan_id]
+        clan_id_list    = config.clan_id_single_dict[clan_id]['clan_id']
 
     player_full_db      = config.player_full_db_file
 
@@ -62,6 +94,9 @@ def get_clan_score(clan_id, req_type='public'):
             clan_player_dict = dict(islice(clan_player_dict.items(),20))
 
         total_score = get_clan_score_total(get_clan_score_from_dict(clan_player_dict))
+
+        if score_only is True:
+            return total_score
 
         return dict_to_html(clan_player_dict,total_score)
 
@@ -146,14 +181,17 @@ def get_full_details():
 def get_player_clan(each_player):
     clan_tag = ''
     clan_id  = ''
+    clan_name= ''
     try:
         clan_tag = each_player['clanTag']
         clan_id  = each_player['clanId']
+        clan_name= each_player['clanName']
     except KeyError:
         clan_tag = '----'
         clan_id  = '----'
+        clan_name= '----'
 
-    return clan_tag,clan_id
+    return clan_tag,clan_id,clan_name
 
 def fetch_player_full_details(device_id,rank_val):
     url_str = 'http://api.skidstorm.cmcm.com/v2/profile/{}'.format(device_id)
@@ -167,8 +205,8 @@ def fetch_player_full_details(device_id,rank_val):
 
     country_db  = config.country_db()
     country_id  = country_db[row['country']].upper()
-    clan_tag, \
-    clan_id     = get_player_clan(row)
+
+    clan_tag, clan_id, clan_name = get_player_clan(row)
 
     game_win    = int(row['wins'])
     game_total  = int(row['gamesPlayed'])
@@ -186,6 +224,7 @@ def fetch_player_full_details(device_id,rank_val):
             'country_id'    :country_id,
             'clan_tag'      :clan_tag,
             'clan_id'       :clan_id,
+            'clan_name'     :clan_name,
             'trophies'      :row['rank'],
             'leg_trophies'  :row['legendaryTrophies'],
             'max_trophies'  :row['economy']['maxRank'],
@@ -261,8 +300,9 @@ def open_player_full_db(ret_type='html',req_type='public'):
         return player_full_data
     
 def open_player_db(country_code,ret_type='html'):
-    player_list = []
-    player_db   = config.player_db_file.format(country_code)
+    player_list     = []
+    player_db       = config.player_db_file.format(country_code)
+    col_header_id   = ['rank', 'name', 'trophies', 'leg_trophies', 'clan_tag']
 
     if os.path.exists(player_db) == False:
         return get_static_page('error.html') 
@@ -279,21 +319,24 @@ def open_player_db(country_code,ret_type='html'):
                 player_data[key]['clan_tag']])
 
         if ret_type == 'html':
-            return list_to_html(player_list)
+            return list_to_html(player_list,col_header_id)
         elif ret_type == 'json':
             return player_data
 
-def list_to_html(player_list):
+def list_to_html(player_list, col_header_id):
     col_header          = config.col_header
     style_string        = config_html.style_string
     responsive_string   = config_html.responsive_string
     table_preamble      = config_html.table_preamble
     bgcolor_database    = config_html.bgcolor_database
 
-    col_header_id       = ['rank', 'name', 'trophies', 'leg_trophies', 'clan_tag']
-
     big_string = \
     '''<html>{}{}<body bgcolor="{}">'''.format(responsive_string,style_string,bgcolor_database)
+
+    if len(col_header_id) is 4:
+        big_string += config_html.list_to_html_clan_rank_header
+    elif len(col_header_id) is 5:
+        big_string += config_html.list_to_html_country_header
 
     big_string += table_preamble
 
@@ -589,6 +632,7 @@ def main():
     bottle.route('/gen/get_season_end',                             method='GET')(get_season_end)
     bottle.route('/gen/get_full_details',                           method='GET')(open_player_full_db)
     bottle.route('/gen/get_clan_score/<clan_id>',                   method='GET')(get_clan_score)
+    bottle.route('/gen/get_clan_rank',                              method='GET')(get_clan_rank)
     bottle.route('/gen/get_time_data',                              method='GET')(open_time_data)
 
     bottle.route('/secret/get_clan_score/<clan_id>/<req_type>',     method='GET')(get_clan_score)

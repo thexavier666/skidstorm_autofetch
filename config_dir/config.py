@@ -13,35 +13,33 @@ country_list_db     = 'config_dir/country_code.json'
 date_json_filename  = player_db_file_dir + 'all_event_time.json'
 
 # ID of clans
-clan_id_dict = {
-        'revo' : ['93633','123276','119234','126321'],
-        'cyre' : ['138751','190261'],
-        'espa' : ['150634'],
-        'noss' : ['188811'],
-        'sx'   : ['163287'],
-        'flux' : ['178377'],
-        'rush' : ['50230'],
-        'vudu' : ['164222','181859'],
-        'free' : ['----']}
+clan_id_dict = { \
+        'revo'  : {'clan_id':['93633','123276','119234'], 'clan_name':'DRIFT Revolutions'},
+        'cyre'  : {'clan_id':['138751','190261'],         'clan_name':'Cyber Rebels Crew'},
+        'espa'  : {'clan_id':['150634'],                  'clan_name':'Putos amos de ESP@'},
+        'noss'  : {'clan_id':['188811'],                  'clan_name':'the brothers of ciro'},
+        'sx'    : {'clan_id':['163287'],                  'clan_name':'Dirt Bikes'},
+        'flux'  : {'clan_id':['178377'],                  'clan_name':'Outcasts'},
+        'rush'  : {'clan_id':['50230'],                   'clan_name':'Rush Team Motori'},
+        'vudu'  : {'clan_id':['164222','181859'],         'clan_name':'DARK ARTS RACING'},
+        'free'  : {'clan_id':['----'],                    'clan_name':'Free agents'}}
 
-clan_id_single_dict = {
-        'revo_main'     : ['93633'],
-        'revo_fresher'  : ['123276'],
-        'revo_origins'  : ['119234'],
-        'revo_legacy'   : ['126321'],
-        'cyre_main'     : ['138751'],
-        'cyre_second'   : ['190261'],
-        'espa'          : ['150634'],
-        'noss'          : ['188811'],
-        'sx'            : ['163287'],
-        'flux'          : ['178377'],
-        'rush'          : ['50230'],
-        'vudu'          : ['164222'],
-        'p100'          : ['147490'],
-        'cn_clan'       : ['187006'],
-        'swe'           : ['837'],
-        'smiley'        : ['26498'],
-        'free'          : ['0']}
+clan_id_single_dict = { \
+        'revo_main'     : {'clan_id':['93633'],  'clan_name':'DRIFT Revolutions',        'clan_tag':'REVO'},
+        'revo_fresher'  : {'clan_id':['123276'], 'clan_name':'DRIFT Revolutions FRESHER','clan_tag':'RΕVO'},
+        'revo_origins'  : {'clan_id':['119234'], 'clan_name':'DRIFT Revolutions ORIGINS','clan_tag':'REV0'},
+        'cyre_main'     : {'clan_id':['138751'], 'clan_name':'Cyber Rebels Crew',        'clan_tag':'CYRE'},
+        'espa'          : {'clan_id':['150634'], 'clan_name':'Putos amos de ESP@',       'clan_tag':'E$P@'},
+        'noss'          : {'clan_id':['188811'], 'clan_name':'the brothers of ciro',     'clan_tag':'NOSS'},
+        'sx'            : {'clan_id':['163287'], 'clan_name':'Dirt Bikes',               'clan_tag':'SX'},
+        'flux'          : {'clan_id':['178377'], 'clan_name':'Outcasts',                 'clan_tag':'FLUX'},
+        'rush'          : {'clan_id':['50230'],  'clan_name':'Rush Team Motori',         'clan_tag':'Rush'},
+        'vudu'          : {'clan_id':['164222'], 'clan_name':'DARK ARTS RACING',         'clan_tag':'VUDU'},
+        'p100'          : {'clan_id':['147490'], 'clan_name':'Poland 100 Years of Independance', 'clan_tag':'P100'},
+        'cn_clan'       : {'clan_id':['187006'], 'clan_name':'Happy virus',              'clan_tag':'C҉N҉'},
+        'swe'           : {'clan_id':['837'],    'clan_name':'Sweden',                   'clan_tag':'SWE'},
+        'smiley'        : {'clan_id':['26498'],  'clan_name':'smiley',                   'clan_tag':'☺️'},
+        'free'          : {'clan_id':['----'],   'clan_name':'Free agents',              'clan_tag':'----'}}
 
 def col_header_key(req_type='public'):
     col_header_key = [ \
@@ -64,11 +62,13 @@ def col_header_key(req_type='public'):
 # Used as column header in the full database webpage
 col_header = { \
         'rank'          :['num_type','Rank'                      ],
+        'clan_score'    :['num_type','Clan Score'                ],
         'name'          :['str_type','Username'                  ],
         'user_id'       :['num_type','Player ID'                 ],
         'country_id'    :['cen_type','Country'                   ],
         'clan_tag'      :['cen_type','Clan Tag'                  ],
         'clan_id'       :['num_type','Clan ID'                   ],
+        'clan_name'     :['str_type','Clan Name'                 ],
         'trophies'      :['num_type','Trophies<br>(Current)'     ],
         'leg_trophies'  :['num_type','Trophies<br>(Legendary)'   ],
         'max_trophies'  :['num_type','Trophies<br>(Highest Ever)'],

@@ -4,7 +4,7 @@ bgcolor_body        = '#ffffff'
 css_style_string = \
 '''
 .header{
-	background: #3b5998;
+	background: #03396c;
 	text-align: center;
 	color: white;
 }
@@ -46,9 +46,10 @@ table td + td{
 }
 .table-heading{
 	border-bottom:1px solid gray;
-	text-align:center;
 	background:#3b79a9;
 	color:#ffffff;
+	text-align:center;
+	font-weight:bold;
 	position:sticky;
 	top: 0;
 	z-index: 10;
@@ -57,6 +58,26 @@ ul{
 	display:table;
 	margin:0 auto;
 }
+'''
+
+list_to_html_country_header = \
+'''
+<div class="header">
+    <br>
+    <h1>Country Rank</h1>
+    <br>
+</div>
+<br>
+'''
+
+list_to_html_clan_rank_header = \
+'''
+<div class="header">
+    <br>
+    <h1>Clan Rank</h1>
+    <br>
+</div>
+<br>
 '''
 
 style_string = \
