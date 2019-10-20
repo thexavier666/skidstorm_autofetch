@@ -1,65 +1,6 @@
 bgcolor_database    = '#ffffff'
 bgcolor_body        = '#ffffff'
 
-css_style_string = \
-'''
-.header{
-	background: #03396c;
-	text-align: center;
-	color: white;
-}
-.header-alt{
-	background: #d9534f;
-	text-align: center;
-	color: white;
-}
-.alt-footer{
-	text-align: center;
-	font-size: 20px;
-}
-body{
-	font-family: 'Space Mono', monospace;
-	font-size: 12px;
-}
-.text-alt{
-	font-family: 'Space Mono', monospace;
-	font-size: 24px;
-}
-table{
-	border:1px solid grey;
-	margin-left:auto;
-	margin-right:auto;
-}
-td.num_type{
-	text-align: right;
-}
-td.cen_type{
-	white-space: nowrap;
-	text-align: center;
-}
-td.str_type{
-	text-align: left;
-	white-space: nowrap;
-}
-table td + td{
-	border-left:1px solid gray;
-}
-.table-heading{
-	border-bottom:1px solid gray;
-	background:#3b79a9;
-	color:#ffffff;
-	text-align:center;
-	font-weight:bold;
-	position:sticky;
-	top: 0;
-	z-index: 10;
-}
-ul{
-	display:table;
-	margin:0 auto;
-}
-'''
-
 list_to_html_country_header = \
 '''
 <div class="header">
@@ -84,9 +25,9 @@ style_string = \
 '''
 <head>
     <link href="https://fonts.googleapis.com/css?family=Space+Mono&display=swap" rel="stylesheet">
-    <style>{}</style>
+    <link href="/stylesheet-alt.css" rel="stylesheet">
 </head>
-'''.format(css_style_string)
+'''
 
 responsive_string = \
 '''<meta name="viewport" content="width=device-width, initial-scale=1.0">'''
@@ -188,27 +129,27 @@ date_file_string = \
                 </tr>
                 <tr>
                     <td>Small database starts</td>
-                    <td class="num_type">{}</td>
+                    <td class="str_type">{}</td>
                 </tr>
                 <tr>
                     <td>Small database ends</td>
-                    <td class="num_type">{}</td>
+                    <td class="str_type">{}</td>
                 </tr>
                 <tr>
                     <td>Country database starts</td>
-                    <td class="num_type">{}</td>
+                    <td class="str_type">{}</td>
                 </tr>
                 <tr>
                     <td>Country database ends</td>
-                    <td class="num_type">{}</td>
+                    <td class="str_type">{}</td>
                 </tr>
                 <tr>
                     <td>Large database starts</td>
-                    <td class="num_type">{}</td>
+                    <td class="str_type">{}</td>
                 </tr>
                 <tr>
                     <td>Large database ends</td>
-                    <td class="num_type">{}</td>
+                    <td class="str_type">{}</td>
                 </tr>
             </table>
         <center>

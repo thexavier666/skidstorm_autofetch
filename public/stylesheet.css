@@ -1,14 +1,14 @@
-body {
+body{
 	font-family: 'Share Tech Mono';
-	font-size: 24px;
+	font-size: 22px;
 }
-ul {
-	width: 50%;
+ul{
+	width: 70%;
 	margin: auto;
 	display:table;
 }
 .header{
-	background: #03396c;
+	background: #3b5998;
 	text-align: center;
 	color: white;
 }
@@ -19,4 +19,15 @@ ul {
 }
 .body{
 	background: #8b9dc3;
+}
+.link-box{
+	background:#8b9dc3;
+}
+
+a{
+	text-decoration:none;
+}
+
+.static-table{
+    font-size:22px;
 }

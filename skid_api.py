@@ -34,7 +34,7 @@ def get_clan_rank():
 
         clan_rank_list.append(tmp_list)
 
-    clan_rank_list = clan_rank_list[0:-1]
+    clan_rank_list = clan_rank_list[0:10]
 
     sorted_clan_rank_list = sorted(clan_rank_list, key = lambda x:x[3], reverse=True)
 
