@@ -31,13 +31,13 @@ a{
 }
 .static-table{
     font-size:22px;
-	width:350px;
+	width:400px;
 	padding: 10px;
 	border: 3px solid skyblue;
 }
 .country-table{
 	font-size:22px;
 	width:400px;
-	padding: 9px;
+	padding: 10px;
 	border: 3px solid grey;
 }

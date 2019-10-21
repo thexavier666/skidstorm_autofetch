@@ -193,11 +193,27 @@ def get_player_clan(each_player):
 
     return clan_tag,clan_id,clan_name
 
+def url_fetch_error_handle(url_str):
+
+    response_json = {}
+
+    while True:
+        try:
+            req_obj = requests.get(url_str)
+            response_json = json.loads(req_obj.text)
+            break
+        except:
+            time.sleep(config.error_sleep_duration)
+            if sys.argv[1] == '1':
+                print('[INFO] Error while fetching/loading')
+
+    return response_json
+
+
 def fetch_player_full_details(device_id,rank_val):
     url_str = 'http://api.skidstorm.cmcm.com/v2/profile/{}'.format(device_id)
 
-    p = requests.get(url_str)
-    q = json.loads(p.text)
+    q = url_fetch_error_handle(url_str)
 
     resp_dict = {}
 
@@ -251,8 +267,7 @@ def fetch_rank_details(num_1, num_2, rank_val, country_code):
 
     url_str = 'http://api.skidstorm.cmcm.com/v2/rank/list/{0}-{1}/{2}'.format(num_1,num_2,country_code)
 
-    p = requests.get(url_str)
-    q = json.loads(p.text)
+    q = url_fetch_error_handle(url_str)
 
     resp_dict = {}
 
