@@ -17,11 +17,7 @@ error_sleep_duration = 3
 clan_id_dict = { \
         'revo'  : {'clan_id':['93633','123276','119234'], 'clan_name':'DRIFT Revolutions'},
         'cyre'  : {'clan_id':['138751','190261'],         'clan_name':'Cyber Rebels Crew'},
-        'espa'  : {'clan_id':['150634'],                  'clan_name':'Putos amos de ESP@'},
-        'noss'  : {'clan_id':['188811'],                  'clan_name':'the brothers of ciro'},
         'sx'    : {'clan_id':['163287'],                  'clan_name':'Dirt Bikes'},
-        'flux'  : {'clan_id':['178377'],                  'clan_name':'Outcasts'},
-        'rush'  : {'clan_id':['50230'],                   'clan_name':'Rush Team Motori'},
         'vudu'  : {'clan_id':['164222','181859'],         'clan_name':'DARK ARTS RACING'},
         'free'  : {'clan_id':['----'],                    'clan_name':'Free agents'}}
 
