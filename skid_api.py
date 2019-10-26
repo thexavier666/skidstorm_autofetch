@@ -6,9 +6,10 @@ import threading
 import time
 import os
 import bottle
-import datetime
 import sys
 import datetime
+
+from itertools import islice
 
 from config_dir import config
 from config_dir import config_html
@@ -76,6 +77,7 @@ def get_clan_score(clan_id, req_type='public', score_only=False):
                         'user_id'       :player_data[key]['user_id'],
                         'country_id'    :player_data[key]['country_id'],
                         'clan_tag'      :player_data[key]['clan_tag'],
+                        'clan_name'     :player_data[key]['clan_name'],
                         'trophies'      :player_data[key]['trophies'],
                         'leg_trophies'  :player_data[key]['leg_trophies'],
                         'max_trophies'  :player_data[key]['max_trophies'],
@@ -90,7 +92,6 @@ def get_clan_score(clan_id, req_type='public', score_only=False):
                 init_rank += 1
 
         if req_type == 'public':
-            from itertools import islice
             clan_player_dict = dict(islice(clan_player_dict.items(),20))
 
         total_score = get_clan_score_total(get_clan_score_from_dict(clan_player_dict))
@@ -589,7 +590,7 @@ def dict_to_html(player_dict, clan_score=0, req_type='public'):
             <h2>Total Score : {}</h1>
             <br>
         </div><br>
-        '''.format(player_dict[1]['clan_tag'],clan_score)
+        '''.format(player_dict[1]['clan_name'],clan_score)
         big_string += score_html
 
     big_string += table_preamble

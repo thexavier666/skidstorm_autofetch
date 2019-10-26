@@ -1,3 +1,6 @@
+import json
+import os
+
 # directory in which the fetched data is to be stored
 player_db_file_dir  = 'data/'
 
@@ -33,7 +36,7 @@ clan_id_single_dict = { \
         'rush'          : {'clan_id':['50230'],  'clan_name':'Rush Team Motori',         'clan_tag':'Rush'},
         'vudu'          : {'clan_id':['164222'], 'clan_name':'DARK ARTS RACING',         'clan_tag':'VUDU'},
         'p100'          : {'clan_id':['147490'], 'clan_name':'Poland 100 Years of Independance', 'clan_tag':'P100'},
-        'cn_clan'       : {'clan_id':['187006'], 'clan_name':'Happy virus',              'clan_tag':'C҉N҉'},
+        'cn_clan'       : {'clan_id':['191806'], 'clan_name':'Supreme ⚡ racer',         'clan_tag':'₡₦'},
         'swe'           : {'clan_id':['837'],    'clan_name':'Sweden',                   'clan_tag':'SWE'},
         'smiley'        : {'clan_id':['26498'],  'clan_name':'smiley',                   'clan_tag':'☺️'},
         'free'          : {'clan_id':['----'],   'clan_name':'Free agents',              'clan_tag':'----'}}
@@ -96,7 +99,6 @@ num_pages_fetch_world = 5
 num_pages_fetch_country = 1
 
 def country_db():
-    import json
     country_dict = json.load(open(country_list_db,'r'))
     country_dict = {v: k for k, v in country_dict.items()}
     return country_dict
@@ -119,7 +121,6 @@ def country_list():
 
 # checking if app is running in local machine or heroku
 def is_heroku_env():
-    import os
     if 'DYNO' in os.environ:
         return True 
     else:
