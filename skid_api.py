@@ -554,6 +554,7 @@ def do_clan_score():
                             'user_id'       :player_data[key]['user_id'],
                             'country_id'    :player_data[key]['country_id'],
                             'clan_tag'      :player_data[key]['clan_tag'],
+                            'clan_name'     :player_data[key]['clan_name'],
                             'trophies'      :player_data[key]['trophies'],
                             'leg_trophies'  :player_data[key]['leg_trophies'],
                             'max_trophies'  :player_data[key]['max_trophies'],
