@@ -108,7 +108,7 @@ def country_list():
     country_list = []
     country_list = [ \
                 'au','nz', \
-                'br','us','ca','mx', \
+                'br','us','ca','mx', 'co', 'ec', \
                 'cn','in','id','kr','jp','sg','my','hk','th', \
                 'pt','de','it','nl','fr','be','es','gb','ie','gr', \
                 'pl','ro','si','hu', \
