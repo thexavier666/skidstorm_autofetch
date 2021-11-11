@@ -6,15 +6,17 @@
 
 Skidstorm is a top-down racing game released on both Android and iOS, developed by Immobile Games, a Finnish game studio.
 The copyrights to the game was later handed off to Cheetah Games.
-However, due to unknown reasons, the game was eventually removed from Google Play Store and iOS app store.
+However, due to various reasons, the game was eventually removed from Google Play Store and iOS app store.
 
 ## About this Repo
 
-It fetches player information, such as rank/number of games played/medals, as well as country-wise player information from Cheetah servers, and displays the results in a dynamic manner.
-It uses the Bottle API to create RESTful APIs, which is internally used by the application.
+It globally tracks player information, such as rank/number of games played/medals, as well as country-wise player information from Cheetah servers, and displays the results in a dynamic manner.
+It uses the Bottle API to create REST APIs, which is internally used by the application.
+You can deploy it in your own machine or use my Heroku instance.
 
-However, since the game was eventually closed down, the servers were also shut down, thus the repo is no longer being updated.
-This repo serves as a nice example of how to properly develop and use REST APIs.
+Unfortunately the game was closed down in 2020 due to monetary issues, and the game servers were also shut down, thus the repo is no longer being updated.
+However, this repo serves as a nice example of how to properly develop and use REST APIs.
+Even now, I sometimes come back here to understand how to develop proper APIs.
 
 ## Deployment
 
